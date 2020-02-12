@@ -1,4 +1,4 @@
-addContactInformation<?php
+<?php
 $this->element('place-modal');
 $this->element('park-selling-entrance-fee-modal');
 // datatable
@@ -42,11 +42,11 @@ $this->Html->script('/rsto/js/rsto.directory', ['block' => true]);
         <div class="box-body">
             <table id="rsto-directory-datatable" class="table table-bordered table-hover table-responsive rsto-datatable" width="100%" data-url="<?= $rsto_directory_datatable_url ?>" data-x-csrf-token="<?= $x_csrf_token ?>">
                 <thead>
-                <tr>
-                    <th><?= __('Title') ?></th>
-                    <th><?= __('Fullname') ?></th>
-                    <th><?= __('Description') ?></th>
-                </tr>
+                    <tr>
+                        <th><?= __('Title') ?></th>
+                        <th><?= __('Fullname') ?></th>
+                        <th><?= __('Description') ?></th>
+                    </tr>
                 </thead>
             </table>
         </div>

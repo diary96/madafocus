@@ -20,13 +20,13 @@ class DirectoryController extends AppController {
 
     /**
      * Directory table
-     * @var \Cake\ORM\Table
+     * @var \Cake\ORM\Table 
      */
     protected $directory;
 
     /**
      * Contact infos tables
-     * @var \Cake\ORM\Table
+     * @var \Cake\ORM\Table 
      */
     protected $contactInfos;
     protected $actionsPrivileges = [
@@ -114,7 +114,7 @@ class DirectoryController extends AppController {
             $this->raise404('Incomplete data!');
         }
     }
-
+    
     public function deleteContactInformation() {
         $this->jsonOnly();
         $_contact_information = $this->contactInfos->get($this->request->getData('id_directory_contact_information'));

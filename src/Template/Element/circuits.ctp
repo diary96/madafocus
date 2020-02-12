@@ -64,50 +64,50 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                 <div class="modal-body">
                     <table id="rsto-circuit-days-datatable" width="100%" class="table table-bordered table-hover table-responsive">
                         <thead>
-                        <tr>
-                            <th><?= __('Day') ?></th>
-                            <th><?= __('Date') ?></th>
-                            <th><?= __('Place') ?></th>
-                            <th><?= __('Hotel') ?></th>
-                            <th><?= __('Specify') ?></th>
-                        </tr>
+                            <tr>
+                                <th><?= __('Day') ?></th>
+                                <th><?= __('Date') ?></th>
+                                <th><?= __('Place') ?></th>
+                                <th><?= __('Hotel') ?></th>
+                                <th><?= __('Specify') ?></th>
+                            </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>12/12/2020</td>
-                            <td>Antsirabe</td>
-                            <td>Zandina Hotel</td>
-                            <td>&laquo;Undefined&raquo;</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>12/13/2020</td>
-                            <td>&laquo;Undefined&raquo;</td>
-                            <td>&laquo;Undefined&raquo;</td>
-                            <td>&laquo;Undefined&raquo;</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>12/14/2020</td>
-                            <td>&laquo;Undefined&raquo;</td>
-                            <td>&laquo;Undefined&raquo;</td>
-                            <td>&laquo;Undefined&raquo;</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>12/15/2020</td>
-                            <td>&laquo;Undefined&raquo;</td>
-                            <td>&laquo;Undefined&raquo;</td>
-                            <td>&laquo;Undefined&raquo;</td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>12/16/2020</td>
-                            <td>&laquo;Undefined&raquo;</td>
-                            <td>&laquo;Undefined&raquo;</td>
-                            <td>&laquo;Undefined&raquo;</td>
-                        </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>12/12/2020</td>
+                                <td>Antsirabe</td>
+                                <td>Zandina Hotel</td>
+                                <td>&laquo;Undefined&raquo;</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>12/13/2020</td>
+                                <td>&laquo;Undefined&raquo;</td>
+                                <td>&laquo;Undefined&raquo;</td>
+                                <td>&laquo;Undefined&raquo;</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>12/14/2020</td>
+                                <td>&laquo;Undefined&raquo;</td>
+                                <td>&laquo;Undefined&raquo;</td>
+                                <td>&laquo;Undefined&raquo;</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>12/15/2020</td>
+                                <td>&laquo;Undefined&raquo;</td>
+                                <td>&laquo;Undefined&raquo;</td>
+                                <td>&laquo;Undefined&raquo;</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>12/16/2020</td>
+                                <td>&laquo;Undefined&raquo;</td>
+                                <td>&laquo;Undefined&raquo;</td>
+                                <td>&laquo;Undefined&raquo;</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -148,14 +148,14 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                         <div class="box-header with-border">
                             <h3 class="box-title">Driving information</h3>
                         </div>
-                        <div class="box-body">
+                          <div class="box-body">
                             <div class="form-group">
-                                <label for="rsto-circuit-day-driver"><?= __('Carrier') ?></label>
-                                <select class="form-control" data-required="true" id="rsto-circuit-day-driver" data-url="" data-placeholder="<?= __("Choose a carrier") ?>">
-                                    <option>RSMandimby Transport</option>
-                                    <option selected>Coopérative Diary</option>
-                                    <option>Sandratra Transport</option>
-                                </select>
+                              <label for="rsto-circuit-day-driver"><?= __('Carrier') ?></label>
+                              <select class="form-control" data-required="true" id="rsto-circuit-day-driver" data-url="" data-placeholder="<?= __("Choose a carrier") ?>">
+                                  <option>RSMandimby Transport</option>
+                                  <option selected>Coopérative Diary</option>
+                                  <option>Sandratra Transport</option>
+                              </select>
                             </div>
                             <!--div class="form-group">
                               <label for="rsto-circuit-day-driver"><-?= __('Driver') ?></label>
@@ -166,12 +166,12 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                               </select>
                             </div-->
                             <div class="form-group">
-                                <label for="rsto-circuit-day-driver"><?= __('Vehicle') ?></label>
-                                <select class="form-control" data-required="true" id="rsto-circuit-day-driver" data-url="" data-placeholder="<?= __("Choose a driver") ?>">
-                                    <option>14 568 WWT</option>
-                                    <option selected>1556 TBL</option>
-                                    <option>0103 TAV</option>
-                                </select>
+                              <label for="rsto-circuit-day-driver"><?= __('Vehicle') ?></label>
+                              <select class="form-control" data-required="true" id="rsto-circuit-day-driver" data-url="" data-placeholder="<?= __("Choose a driver") ?>">
+                                  <option>14 568 WWT</option>
+                                  <option selected>1556 TBL</option>
+                                  <option>0103 TAV</option>
+                              </select>
                             </div>
                         </div>
                         <div class="box-footer">
@@ -200,23 +200,23 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                                 <label><?= __('Room list') ?></label>
                                 <table id="rsto-circuit-day-hotel-rooms-datatatable" width="100%" class="table table-bordered table-hover table-responsive">
                                     <thead>
-                                    <tr>
-                                        <th><?= __('Room') ?></th>
-                                        <th><?= __('Count') ?></th>
-                                        <th><?= __('Pax') ?></th>
-                                    </tr>
+                                        <tr>
+                                            <th><?= __('Room') ?></th>
+                                            <th><?= __('Count') ?></th>
+                                            <th><?= __('Pax') ?></th>
+                                        </tr>
                                     </thead>
                                     <tbody>
-                                    <tr>
-                                        <td>Double</td>
-                                        <td>1</td>
-                                        <td>1</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Suite</td>
-                                        <td>1</td>
-                                        <td>3</td>
-                                    </tr>
+                                        <tr>
+                                            <td>Double</td>
+                                            <td>1</td>
+                                            <td>1</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Suite</td>
+                                            <td>1</td>
+                                            <td>3</td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -234,9 +234,9 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                         <div class="box-body">
                             <table id="rsto-circuit-day-specify-datatable" width="100%" class="table table-bordered table-hover table-responsive rsto-datatable" data-x-csrf-token="<?= $x_csrf_token ?>" data-url="/rsmandimby/circuits/specify">
                                 <thead>
-                                <tr>
-                                    <th><?= __('Name') ?></th>
-                                </tr>
+                                    <tr>
+                                        <th><?= __('Name') ?></th>
+                                    </tr>
                                 </thead>
                             </table>
                         </div>

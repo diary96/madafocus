@@ -19,7 +19,7 @@ $this->Html->script('/rsto/js/rsto.circuits', ['block' => true]);
             <h3 class="box-title"><?= __('What do you want to do ?') ?></h3>
         </div>
         <div class="box-body">
-                <button class="btn btn-app" id="rsto-circuits-add-btn">
+                <button class="btn btn-app" id="rsto-circuit-add-btn">
                     <i class="fa fa-plus"></i> <?= __('New') ?>
                 </button>
                 <button class="btn btn-app disabled" id="rsto-circuit-edit-btn" disabled>
@@ -46,17 +46,51 @@ $this->Html->script('/rsto/js/rsto.circuits', ['block' => true]);
             <h3 class="box-title"><?= __('Services') ?></h3>
         </div>
         <div class="box-body">
-            <table id="rsto-circuit-datatable" class="table table-bordered table-hover table-responsive rsto-datatable" data-url="<?= $rsto_circuits_datatable_url?>" data-x-csrf-token="<?= $x_csrf_token ?>" width="100%">
+            <table id="rsto-circuit-datatable" class="table table-bordered table-hover table-responsive rsto-datatable" width="100%" data-url="<?= $rsto_circuits_datatable_url ?>" data-x-csrf-token="<?= $x_csrf_token ?>">
                 <thead>
                     <tr>
-                        <th><?= __('code') ?></th>
-                        <th><?= __('START') ?></th>
-                        <th><?= __('length') ?></th>
-                        <th><?= __('pax') ?></th>
-                        <th><?= __('drive') ?></th>
-                        <th><?= __('status') ?></th>
+                        <th><?= __('Code') ?></th>
+                        <th><?= __('Start') ?></th>
+                        <th><?= __('Length') ?></th>
+                        <th><?= __('Pax') ?></th>
+                        <th><?= __('Drive') ?></th>
+                        <th><?= __('Status') ?></th>
                     </tr>
                 </thead>
+                <!-- <tbody>
+                    <tr>
+                        <td>MAK-100</td>
+                        <td>12/3/2020</td>
+                        <td>10</td>
+                        <td>2 adults, 2 children </td>
+                        <td>Self</td>
+                        <td>Finished</td>
+                    </tr>
+                    <tr>
+                        <td>MAK-101</td>
+                        <td>02/17/2020</td>
+                        <td>9</td>
+                        <td>2 adults, 2 children </td>
+                        <td>Self</td>
+                        <td>Validated</td>
+                    </tr>
+                    <tr>
+                        <td>BET-51</td>
+                        <td>07/03/2020</td>
+                        <td>21</td>
+                        <td>3 adults, 0 children </td>
+                        <td>driver</td>
+                        <td>Waiting for validation</td>
+                    </tr>
+                    <tr>
+                        <td>TEE-27</td>
+                        <td>07/03/2020</td>
+                        <td>18</td>
+                        <td>2 adults, 0 children </td>
+                        <td>driver</td>
+                        <td>Pendind setup</td>
+                    </tr>
+                </tbody> -->
             </table>
         </div>
     </div>

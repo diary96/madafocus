@@ -25,7 +25,6 @@ var RSTODirectory = {
             {'data': 'fullname'},
             {'data': 'description'}
         ]);
-        console.log(_me);
 
         // Add directory
         _me.buttons.add.click(function () {
@@ -121,13 +120,13 @@ const RSTODirectoryContactInformation = {
         var _me = this;
         var _directory = RSTODirectory;
         _me.xCSRFToken = _me.form.attr('data-x-csrf-token');
-
+        
         // When a new directory is selected
         _directory.table.on('selectionChanged.rsto', function(e, data){
             _me.fields.directory.val(data.id);
         });
-
-        // Init
+        
+        // Init 
         _directory.buttons.infos.click(function () {
             _me.table.RSTODataURLQuery({'id_directory': _directory.table.RSTODatatableSelectedData().id});
             if (_me.datatable === null) {
@@ -141,16 +140,16 @@ const RSTODirectoryContactInformation = {
                 // Change datatable url
                 _me.datatable.ajax.url(_me.table.attr('data-url')).load();
             }
-
+            
             // Show modal
             _me.listModal.modal('show');
         });
-
+        
         // Add contact info
         _me.buttons.add.click(function(){
             _me.modal.modal('show');
         });
-
+        
         // When form is submitted
         _me.form.on('submitted.rsto', function(e, response){
             if(response.success === true){
@@ -162,38 +161,38 @@ const RSTODirectoryContactInformation = {
                 alert(RSTOMessages.Error);
             }
         });
-
+        
         // Datatable selection
         _me.table.on('selectionChanged.rsto', function(e, data){
             // Enable buttons
             _me.buttons.edit.RSTOEnable();
             _me.buttons.delete.RSTOEnable();
-
+            
             // change data-edit-url
             _me.form.RSTODataURLQuery({'id_directory_contact_information': data.id}, 'data-edit-url');
         });
-
+        
         _me.table.on('draw.dt', function(){
             // Disable buttons
             _me.buttons.edit.RSTODisable();
             _me.buttons.delete.RSTODisable();
         });
-
+        
         // Edit a contact info
         _me.buttons.edit.click(function(){
             var _data = _me.table.RSTODatatableSelectedData();
             // Switch edit mode on
             _me.form.attr('data-edit', 'true');
-
+            
             // Fill the form
             _me.fields.type.RSTOOriginalValue(_data.id_type, _data.type_name);
             _me.fields.label.RSTOOriginalValue(_data.label);
             _me.fields.contactInfo.RSTOOriginalValue(_data.contact_info);
-
+            
             // Show modal
             _me.modal.modal('show');
         });
-
+        
         // Delete contact information
         _me.buttons.delete.click(function(){
             confirm(RSTOMessages.ConfirmDelete, function(response){

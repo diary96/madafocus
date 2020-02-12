@@ -19,7 +19,7 @@ class AppController extends Controller {
      * @var AuthComponent
      */
     protected $Auth;
-
+    
     /**
      * Composant de base
      * @var Component\RSTOComponent
@@ -36,16 +36,16 @@ class AppController extends Controller {
     /**
      * Table utilisée par les datatables
      * Si cette variable est null, une erreur 404 est retournée.
-     * @var \Cake\ORM\Table
+     * @var \Cake\ORM\Table 
      */
     protected $datatableTable = null;
 
     /**
      * Tableau des filtres du dataTable
-     * @var array
+     * @var array 
      */
     protected $datatableFilters = null;
-
+    
     protected $datatableCallback = null;
 
     /**
@@ -60,27 +60,27 @@ class AppController extends Controller {
      *     'regex' : ''
      *   ]
      * ]
-     * @var type
+     * @var type 
      */
     protected $datatableAdditionalColumns = [];
 
     /**
      * Table utilisée par les select2
      * Si cette variable est null, une erreur 404 est retournée.
-     * @var \Cake\ORM\Table
+     * @var \Cake\ORM\Table 
      */
     protected $select2Table = null;
 
     /**
      * Tableau des filtres du select2
-     * @var array
+     * @var array 
      */
     protected $select2Filters = null;
 
     /**
      * Champ de table qui servira d'étiquette pour select2
      * Si cette variable est null, une erreur 404 est retournée.
-     * @var \Cake\ORM\Table
+     * @var \Cake\ORM\Table 
      */
     protected $select2Column = null;
 
@@ -95,7 +95,7 @@ class AppController extends Controller {
 
     /**
      * Liste des privileges necessaires pour l'expoitation de la page
-     * @var Array
+     * @var Array 
      */
     protected $actionsPrivileges = [];
 
@@ -111,7 +111,7 @@ class AppController extends Controller {
             $this->set('rsto_logged_user_fullname', $_user['lastname']);
             $this->set('rsto_logged_user_groupname', $_user['group_name']);
             $_privileges = explode(';', $_user['privileges']);
-
+            
             // Create a constant CAN_X_X for each privilege
             foreach(array_keys(UserGroupsController::PRIVILEGES['privileges']) as $_privilege){
                 $_privilegeName = sprintf('CAN_%s', str_replace('.', '_', $_privilege));
@@ -128,7 +128,7 @@ class AppController extends Controller {
     }
 
     public function dashboard() {
-
+        
     }
 
     /**
@@ -145,7 +145,7 @@ class AppController extends Controller {
                 'regex' => ''
             ]
         ];
-
+        
         if (is_null($this->datatableTable)) {
             $this->raise404();
         }
@@ -154,7 +154,7 @@ class AppController extends Controller {
         $_params['table'] = $this->datatableTable;
         $_params['callback'] = $this->datatableCallback;
         $_filters = [];
-
+        
         // Ajout des filtres demandées par le controller
         if (is_array($this->datatableFilters)) {
             foreach ($this->datatableFilters as $_queryParam => $_field) {
@@ -164,7 +164,7 @@ class AppController extends Controller {
                 }
             }
         }
-
+        
         // Ajout des colonnes supplémentaires demandées par le controller
         if (is_array($this->datatableAdditionalColumns)) {
             foreach ($this->datatableAdditionalColumns as $_column){
@@ -173,7 +173,7 @@ class AppController extends Controller {
         }
 
         $_params['filters'] = $_filters;
-
+        
         $this->setJSONResponse($this->loadComponent('Datatable', $_params)->get());
     }
 
@@ -188,7 +188,7 @@ class AppController extends Controller {
         TableRegistry::getTableLocator()->setConfig('UsersView', ['table' => 'view_users']);
 
         $this->RSTO = $this->loadComponent('RSTO');
-
+        
         // Composant nécessaire pour traiter les demandes JSON et XML
         $this->loadComponent('RequestHandler', [
             'enableBeforeRedirect' => false,
