@@ -32,21 +32,21 @@ class CircuitsController extends AppController{
         'roomTypeSelect2' => '11.1',
         'tourOperator' => '11.1',
         'datatable' => '11.1',
-        'serviceSelect2' => '11.1'
+        'serviceSelect2' => '11.1',
         'datatable' => '11.1',
         'add' => '11.2',
         'places' => '11.1',
         'carrier' => '11.1',
         'vehicletype' => '11.1',
         'hotel' => '11.1',
-        'meal' => '11.1',
+        'meal' => '11.1'
     ];
 
     /**
      * Directory table
      */
     protected $circuits;
-    
+
     public function hotels(){
     }
     public function specify(){
@@ -120,7 +120,7 @@ class CircuitsController extends AppController{
         $_params['filters'] = ['id_select' => HotelRoomsController::ROOM_TYPE_ID_SELECT];
         $this->setJSONResponse($this->loadComponent('Select2', $_params)->get());
     }
-    
+
     public function serviceSelect2(){
         $this->jsonOnly();
         $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('ViewService');
@@ -183,7 +183,7 @@ class CircuitsController extends AppController{
         $_entry->id_status = '1';
         $valn = $this->circuits->save($_entry);
         $date = date_format($_entry->start,"Y-m-d");
-        for ($i=0; $i < intval($_entry->duration); $i++) { 
+        for ($i=0; $i < intval($_entry->duration); $i++) {
             $det = $this->tripDet->newEntity();
             $nbDet = $this->tripDet->find()->count();
             $det->id_trip = 'DET-'.$nbDet;
