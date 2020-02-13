@@ -52,17 +52,17 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
 <?php $this->end() ?>
 
 <?php $this->start('rsto_circuit_days_modal') ?>
-<?php if (CAN_10_1) : ?>
+
     <div class="modal fade" id="rsto-circuit-days-modal">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span></button>
-                    <h4 class="modal-title">MAK-100 itinerary</h4>
+                    <h4 class="modal-title"></h4>
                 </div>
                 <div class="modal-body">
-                    <table id="rsto-circuit-days-datatable" width="100%" class="table table-bordered table-hover table-responsive">
+                    <table id="rsto-circuit-days-datatable" width="100%" class="table table-bordered table-hover table-responsive" data-url="<?= $rsto_circuit_daily_datable_url ?>" data-x-csrf-token="<?= $x_csrf_token ?>">
                         <thead>
                             <tr>
                                 <th><?= __('Day') ?></th>
@@ -72,43 +72,6 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                                 <th><?= __('Specify') ?></th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>12/12/2020</td>
-                                <td>Antsirabe</td>
-                                <td>Zandina Hotel</td>
-                                <td>&laquo;Undefined&raquo;</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>12/13/2020</td>
-                                <td>&laquo;Undefined&raquo;</td>
-                                <td>&laquo;Undefined&raquo;</td>
-                                <td>&laquo;Undefined&raquo;</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>12/14/2020</td>
-                                <td>&laquo;Undefined&raquo;</td>
-                                <td>&laquo;Undefined&raquo;</td>
-                                <td>&laquo;Undefined&raquo;</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>12/15/2020</td>
-                                <td>&laquo;Undefined&raquo;</td>
-                                <td>&laquo;Undefined&raquo;</td>
-                                <td>&laquo;Undefined&raquo;</td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>12/16/2020</td>
-                                <td>&laquo;Undefined&raquo;</td>
-                                <td>&laquo;Undefined&raquo;</td>
-                                <td>&laquo;Undefined&raquo;</td>
-                            </tr>
-                        </tbody>
                     </table>
                 </div>
                 <div class="modal-footer">
@@ -120,7 +83,7 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
             </div>
         </div>
     </div>
-<?php endif ?>
+
 <?php $this->end() ?>
 
 <?php $this->start('rsto_circuit_day_modal') ?>
@@ -140,7 +103,7 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                         </div>
                         <div class="box-body">
                             <div class="form-group">
-                                <select name="hotel" class="form-control rsto-select" data-required="true" id="rsto-circuit-day-hotel" data-url="/rsmandimby/circuits/places" data-placeholder="Choose a place"></select>
+                                <select name="hotel" class="form-control rsto-select" data-required="true" id="rsto-circuit-place" data-url="<?= $rsto_circuits_places_select ?>" data-placeholder="Choose a place"></select>
                             </div>
                         </div>
                     </div>
@@ -151,10 +114,8 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                           <div class="box-body">
                             <div class="form-group">
                               <label for="rsto-circuit-day-driver"><?= __('Carrier') ?></label>
-                              <select class="form-control" data-required="true" id="rsto-circuit-day-driver" data-url="" data-placeholder="<?= __("Choose a carrier") ?>">
-                                  <option>RSMandimby Transport</option>
-                                  <option selected>Coopérative Diary</option>
-                                  <option>Sandratra Transport</option>
+                              <select name="carrier" class="form-control" data-required="true" id="rsto-circuit-day-driver" data-url="<?= $rsto_circuits_carrier_select ?>" data-placeholder="<?= __("Choose a carrier") ?>">
+
                               </select>
                             </div>
                             <!--div class="form-group">
@@ -167,10 +128,7 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                             </div-->
                             <div class="form-group">
                               <label for="rsto-circuit-day-driver"><?= __('Vehicle') ?></label>
-                              <select class="form-control" data-required="true" id="rsto-circuit-day-driver" data-url="" data-placeholder="<?= __("Choose a driver") ?>">
-                                  <option>14 568 WWT</option>
-                                  <option selected>1556 TBL</option>
-                                  <option>0103 TAV</option>
+                              <select class="form-control" data-required="true" id="rsto-circuit-day-driver" data-url="<?= $rsto_circuits_vehicle_type_select ?>" data-placeholder="<?= __("Choose a driver") ?>">
                               </select>
                             </div>
                         </div>
@@ -185,15 +143,11 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                         <div class="box-body">
                             <div class="form-group">
                                 <label for="rsto-circuit-day-hotel"><?= __('Hotel') ?></label>
-                                <select name="hotel" class="form-control rsto-select" data-required="true" id="rsto-circuit-day-hotel" data-url="/rsmandimby/circuits/hotels" data-placeholder="Choose an hotel"></select>
+                                <select name="hotel" class="form-control rsto-select" data-required="true" id="rsto-circuit-day-hotel" data-url="<?= $rsto_circuits_hotel_select ?>" data-placeholder="Choose an hotel"></select>
                             </div>
                             <div class="form-group">
                                 <label for="rsto-circuit-day-meal-plan"><?= __('Meal plan') ?></label>
-                                <select name="meal_plan" class="form-control" data-required="true" id="rsto-circuit-day-meal-plan" data-url="" data-placeholder="<?= __("Choose a meal plan") ?>">
-                                    <option>BO</option>
-                                    <option>BB</option>
-                                    <option>HB</option>
-                                    <option>FB</option>
+                                <select name="meal_plan" class="form-control" data-required="true" id="rsto-circuit-day-meal-plan" data-url="<?= $rsto_circuits_meal_select ?>" data-placeholder="<?= __("Choose a meal plan") ?>">
                                 </select>
                             </div>
                             <div class="form-group">
