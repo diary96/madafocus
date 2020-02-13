@@ -5,6 +5,7 @@ const RSTORegex = {
     'integer': /^\d{1,3}(,\d{3})*$/g,
 };
 
+
 const RSTOMessages = {
     'Added': "The item was successfully added!",
     'Updated': "The item was successfully updated!",
