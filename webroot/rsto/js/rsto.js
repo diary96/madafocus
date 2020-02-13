@@ -282,6 +282,7 @@ $.fn.extend({
      * Add .has-error to form-group
      * @returns {jQuery}
      */
+<<<<<<< HEAD
     RSTOAddSuccess: function () {
         return this.each(function () {
             $(this).closest('div.form-group')
@@ -313,6 +314,28 @@ $.fn.extend({
             });
         }
     },
+=======
+    RSTOAddError: function () {
+        return this.each(function () {
+            $(this).closest('div.form-group')
+                    .removeClass('has-success')
+                    .removeClass('has-warning')
+                    .addClass('has-error');
+        });
+    },
+    /**
+     * Add .has-success to form-group
+     * @returns {jQuery}
+     */
+    RSTOAddSuccess: function () {
+        return this.each(function () {
+            $(this).closest('div.form-group')
+                    .removeClass('has-error')
+                    .removeClass('has-warning')
+                    .addClass('has-success');
+        });
+    },
+>>>>>>> 8fa09321f97ca2aafd75c3b363e57a5925738128
     /**
      * Add .has-warning to form-group
      * @returns {jQuery}
@@ -807,8 +830,11 @@ $(window).on('load', function () {
     // Initialize inputs with remote validation
     $('.remote-validation').RSTOAddRemoteValidation();
     // Initialize inputs with numeric validation
+<<<<<<< HEAD
     $('.date-validation').RSTOCheckDate();
     // Initialize inputs with numeric validation
+=======
+>>>>>>> 8fa09321f97ca2aafd75c3b363e57a5925738128
     $('.numeric-validation').RSTOAddValidation('numeric');
     // Initialize inputs with integer validation
     $('.integer-validation').RSTOAddValidation('integer');

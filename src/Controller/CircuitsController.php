@@ -17,11 +17,14 @@ use Cake\Routing\Router;
  * @author RSMandimby
  */
 class CircuitsController extends AppController{
+
+    const ID_TYPE_VEHICLE = 7;
+    const MEAL_TYPE_ID_SELECT = 3;
+
     protected $pageInfos = [
         'title' => 'Circuits',
         'subtitle' => 'Manage your circuits here'
     ];
-    
     protected $actionsPrivileges = [
         'index' => '11.1',
         'hotels' => "11.1",
@@ -29,25 +32,23 @@ class CircuitsController extends AppController{
         'roomTypeSelect2' => '11.1',
         'tourOperator' => '11.1',
         'datatable' => '11.1',
-        'add' => '11.2',
         'serviceSelect2' => '11.1'
+        'datatable' => '11.1',
+        'add' => '11.2',
+        'places' => '11.1',
+        'carrier' => '11.1',
+        'vehicletype' => '11.1',
+        'hotel' => '11.1',
+        'meal' => '11.1',
     ];
 
     /**
      * Directory table
-     * @var \Cake\ORM\Table 
      */
     protected $circuits;
     
     public function hotels(){
-        $this->jsonOnly();
-        $params = $this->request->getData();
-        $params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('view_hotels');
-        $params['column'] = 'name';
-        $response = $this->loadComponent('Select2', $params)->get();
-        $this->setJSONResponse($response);
     }
-    
     public function specify(){
         $this->jsonOnly();
         $_columnModel = [
@@ -61,7 +62,6 @@ class CircuitsController extends AppController{
         ];
         // $_post
         $_params = $this->request->getData();
-        
         $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('ViewServices');
         $_params['filters'] = ['id_place' => 101];
         foreach ([['data' => 'id_place'], ['data' => 'description'], ['data' => 'id_type']] as $_column) {
@@ -69,7 +69,50 @@ class CircuitsController extends AppController{
         }
         $this->setJSONResponse($this->loadComponent('Datatable', $_params)->get());
     }
-    
+
+    public function trip_child() {
+
+    }
+    public function places() {
+        $this->jsonOnly();
+        $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('Places');
+        $_params['column'] = 'name';
+        $this->setJSONResponse($this->loadComponent('Select2', $_params)->get());
+    }
+
+    public function carrier(){
+        $this->jsonOnly();
+        $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('ViewCarriers');
+        $_params['column'] = 'title_name';
+        $this->setJSONResponse($this->loadComponent('Select2', $_params)->get());
+    }
+
+
+    public function vehicletype(){
+        $this->jsonOnly();
+        $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('ViewSelectOptions');
+        $_params['column'] = 'option';
+        $_params['filters'] = ['id_select' => CircuitsController::ID_TYPE_VEHICLE];
+        $this->setJSONResponse($this->loadComponent('Select2', $_params)->get());
+    }
+
+    public function hotel(){
+        $this->jsonOnly();
+        $id_place = $this->request->getQuery('place', 'null');
+        $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('Hotels');
+        $_params['column'] = 'name';
+        $_params['filters'] = ['place' => $id_place];
+        $this->setJSONResponse($this->loadComponent('Select2', $_params)->get());
+    }
+
+    public function meal(){
+        $this->jsonOnly();
+        $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('ViewSelectOptions');
+        $_params['column'] = 'option';
+        $_params['filters'] = ['id_select' => HotelRoomsController::MEAL_TYPE_ID_SELECT];
+        $this->setJSONResponse($this->loadComponent('Select2', $_params)->get());
+    }
+
     public function roomTypeSelect2(){
         $this->jsonOnly();
         $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('ViewSelectOptions');
@@ -97,11 +140,18 @@ class CircuitsController extends AppController{
         // $this->set('rsto_circuits_fullname_validation_url', Router::url('/circuits/validate_fullname'));
         // // Directory
         $this->set('rsto_circuits_add_url', Router::url('/circuits/add'));
+        $this->set('rsto_circuits_places_select', Router::url('/circuits/places'));
+        $this->set('rsto_circuits_hotel_select', Router::url('/circuits/hotel'));
+        $this->set('rsto_circuits_carrier_select', Router::url('/circuits/carrier'));
+        $this->set('rsto_circuits_meal_select', Router::url('/circuits/meal'));
+        $this->set('rsto_circuits_vehicle_type_select', Router::url('/circuits/vehicletype'));
+
         // $this->set('rsto_circuits_edit_url', Router::url('/circuits/edit'));
         // $this->set('rsto_circuits_delete_url', Router::url('/circuits/delete'));
         // $this->set('_serialize', ['circuits']);
         $this->set('rsto_circuits_datatable_url', Router::url('/circuits/datatable'));
         $this->set('rsto_circuits_tour_operator_url', Router::url('/circuits/tour_operator'));
+        $this->set('rsto_circuit_daily_datable_url', Router::url('/circuitdaily/datatable'));
         // $this->set('rsto_circuits_title_select2_url', Router::url('/circuits/title_select2'));
         // Directory contact informations
         // $this->set('rsto_circuits_contact_information_datatable_url', Router::url('/circuits/contact_information_datatable'));
@@ -122,6 +172,7 @@ class CircuitsController extends AppController{
         // Init table
         $this->circuits = TableRegistry::getTableLocator()->get('TripMere');
         $this->tripDet = TableRegistry::getTableLocator()->get('TripDet');
+        // $this->contactInfos = TableRegistry::getTableLocator()->get('DirectoryContactInformations');
     }
 
     public function add() {
