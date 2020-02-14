@@ -91,10 +91,12 @@ var RSTOCircuits = {
         _me.buttons.edit.click(function () {
             _me.form.attr('data-edit', 'true');
             var _data = _me.table.RSTODatatableSelectedData();
-            var d = new Date("2015-03-25");
-            d = _data.START;
+            var d = new Date(_data.START);
+            //d = _data.START;
             // Fill the form+
-            _me.fields.start.RSTOOriginalValue(convertDate(d));
+            console.log(convertDateymd(_data.START));
+            //console.log(convertDate(d));
+            _me.fields.start.RSTOOriginalValue(convertDateymd(_data.START));
             _me.fields.duration.RSTOOriginalValue(_data.DURATION);
             _me.fields.adultCount.RSTOOriginalValue(_data.ADULTS);
             _me.fields.childCount.RSTOOriginalValue(_data.childrens);
@@ -233,6 +235,12 @@ function convertDate(inputFormat) {
     function pad(s) { return (s < 10) ? '0' + s : s; }
     const d = new Date(inputFormat);
     return [d.getFullYear(), pad(d.getDate()),pad(d.getMonth()+1)].join('-')
+    //return [d.getFullYear(), pad(d.getMonth()+1),pad(d.getDate())].join('-')
+}
+function convertDateymd(inputFormat) {
+    var val = inputFormat.split('/');
+    var result = val[2]+"-" + val[1] +"-" + val[0];
+    return result;
 }
 $(window).on('load', function(){
     RSTOCircuits.init();
