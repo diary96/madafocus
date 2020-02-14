@@ -89,7 +89,7 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">×</span></button>
-                <h4 class="modal-title"><?= __("Day 1") ?></h4>
+                <h4 class="modal-title"></h4>
             </div>
             <form id="rsto-service-form" name="rsto-circuit-day-form" class="rsto-form" role="form" data-x-csrf-token="<?= $x_csrf_token ?>" data-action-url="" data-edit-url="">
                 <div class="modal-body" style="background-color: #f0f0f0">
@@ -124,7 +124,7 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                             </div-->
                             <div class="form-group">
                               <label for="rsto-circuit-day-driver"><?= __('Vehicle') ?></label>
-                              <select class="form-control" data-required="true" id="rsto-circuit-day-driver" data-url="<?= $rsto_circuits_vehicle_type_select ?>" data-placeholder="<?= __("Choose a driver") ?>">
+                              <select class="form-control" data-required="true" id="rsto-circuit-day-type-vehicule" data-url="<?= $rsto_circuits_vehicle_type_select ?>" data-placeholder="<?= __("Choose a driver") ?>">
                               </select>
                             </div>
                         </div>
