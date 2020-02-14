@@ -58,10 +58,18 @@ var RSTOCircuits = {
 
         // On datatable selection changed
         _me.table.on('selectionChanged.rsto', function (e, data) {
+            var _data = _me.table.RSTODatatableSelectedData();
+            if(_data.ID_STATUS == 1){
+                _me.buttons.validation.RSTOEnable();
+            }
+            else{
+                _me.buttons.validation.RSTODisable();
+            }
+
             // Enable buttons
             _me.buttons.edit.RSTOEnable();
             _me.buttons.delete.RSTOEnable();
-            _me.buttons.validation.RSTOEnable();
+
             _me.buttons.infos.RSTOEnable();
             _me.buttons.configure.RSTOEnable();
 

@@ -197,6 +197,7 @@ class CircuitsController extends AppController{
              ['data' => 'childrens'],
              ['data' => 'id_tour_operator'],
              ['data' => 'lib_tour_operator'],
+             ['data' => 'ID_STATUS'],
              ['data' => 'self_drive']
         ];
 
