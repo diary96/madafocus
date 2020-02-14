@@ -124,7 +124,7 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                             </div-->
                             <div class="form-group">
                               <label for="rsto-circuit-day-driver"><?= __('Vehicle') ?></label>
-                              <select class="form-control" data-required="true" id="rsto-circuit-day-driver" data-url="<?= $rsto_circuits_vehicle_type_select ?>" data-placeholder="<?= __("Choose a driver") ?>">
+                              <select class="form-control" data-required="true" id="rsto-circuit-day-type-vehicule" data-url="<?= $rsto_circuits_vehicle_type_select ?>" data-placeholder="<?= __("Choose a driver") ?>">
                               </select>
                             </div>
                         </div>

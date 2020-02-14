@@ -127,12 +127,12 @@ var RSTOTripChild = {
     datatable: null,
     listModal: $('#rsto-circuit-days-modal'),
     configureModal: $('#rsto-circuit-day-modal'),
+    form: $('#rsto-service-form'),
     fields: {
-        hotel: $('#rsto-circuit-day-hotel'),
+        id_hotel: $('#rsto-circuit-day-hotel'),
         carrier: $('#rsto-circuit-day-driver'),
-        vehicle: $('#rsto-circuit-day-driver'),
-        place : $('#rsto-circuit-place')
-
+        type_vehicule: $('#rsto-circuit-day-type-vehicule'),
+        id_places : $('#rsto-circuit-place')
     },
     buttons: {
         configure: $('#rsto-circuit-day-configure-btn')
@@ -143,7 +143,7 @@ var RSTOTripChild = {
 
        _me.xCSRFToken = circuits.xCSRFToken;
 
-        _me.fields.place.change(function(){
+        _me.fields.id_places.change(function(){
             _me.fields.hotel.RSTODataURLQuery({place: _me.fields.place.val()});
 
         });
@@ -181,6 +181,13 @@ var RSTOTripChild = {
             _me.buttons.configure.RSTOEnable();
         });
         _me.buttons.configure.click( function() {
+            _me.form.attr('data-edit', 'true');
+            var dataSelected = _me.table.RSTODatatableSelectedData();
+            console.log(dataSelected);
+            _me.fields.id_hotel.RSTOOriginalValue(dataSelected.id_hotel);
+            _me.fields.id_places.RSTOOriginalValue(dataSelected.place);
+            _me.fields.carrier.RSTOOriginalValue(dataSelected.id_carrier);
+
             _me.configureModal.modal('show');
         });
     }
