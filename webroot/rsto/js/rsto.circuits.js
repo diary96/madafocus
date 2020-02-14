@@ -172,7 +172,7 @@ var RSTOTripChild = {
        _me.xCSRFToken = circuits.xCSRFToken;
 
         _me.fields.id_places.change(function(){
-            _me.fields.hotel.RSTODataURLQuery({place: _me.fields.place.val()});
+            _me.fields.id_hotel.RSTODataURLQuery({place: _me.fields.id_places.val()});
 
         });
        /*_me.place.onchange(function () {
@@ -216,6 +216,7 @@ var RSTOTripChild = {
             _me.fields.id_places.RSTOOriginalValue(dataSelected.place);
             _me.fields.carrier.RSTOOriginalValue(dataSelected.id_carrier);
 
+            _me.configureModal.RSTOModalTitle("Day - {0}".format(dataSelected.day));
             _me.configureModal.modal('show');
         });
     }
