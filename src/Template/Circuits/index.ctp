@@ -28,10 +28,10 @@ $this->Html->script('/rsto/js/rsto.circuits', ['block' => true]);
                 <button class="btn btn-app disabled" id="rsto-circuit-configure-btn" disabled>
                     <i class="fa fa-calendar"></i> <?= __('Configure') ?>
                 </button>
-                <button class="btn btn-app disabled" id="rsto-circuit-validation-btn" disabled>
+                <button class="btn btn-app disabled" id="rsto-circuit-quote-btn" disabled>
                     <i class="fa fa-download"></i> <?= __('Quote') ?>
                 </button>
-                <button class="btn btn-app disabled" id="rsto-circuit-validation-btn" disabled>
+                <button class="btn btn-app disabled" id="rsto-circuit-validation-btn" data-url="<?= $rsto_circuits_validate_url ?>" disabled>
                     <i class="fa fa-check-circle"></i> <?= __('Validate') ?>
                 </button>
                 <button class="btn btn-app disabled" id="rsto-service-delete-btn" disabled>
