@@ -5,6 +5,7 @@ const RSTORegex = {
     'integer': /^\d{1,3}(,\d{3})*$/g,
 };
 
+
 const RSTOMessages = {
     'Added': "The item was successfully added!",
     'Updated': "The item was successfully updated!",
@@ -49,7 +50,7 @@ const RSTOCRUD = function (config){
     _me.buttons.add.click(function(){
             _me.modal.modal('show');
     });
-
+    
     // After form submission
     _me.form.on('submitted.rsto', function(e, response){
         if(response.success){
@@ -61,7 +62,7 @@ const RSTOCRUD = function (config){
             alert(RSTOMessages.Error);
         }
     });
-
+    
     // When an item is selected on the datatable
     _me.table.on('selectionChanged.rsto', function(e, data){
         // Enable buttons
@@ -70,13 +71,13 @@ const RSTOCRUD = function (config){
                 _me.buttons[_button].RSTOEnable();
             }
         }
-
+        
         // Update data-edit-url
         var _requestQuery = {};
         _requestQuery[config.primaryKey];
         _me.form.RSTODataURLQuery(_requestQuery, 'data-edit-url');
     });
-
+    
     // When datatable is redrawn
     _me.table.on('draw.dt', function(){
         // Disblae buttons
@@ -86,7 +87,7 @@ const RSTOCRUD = function (config){
             }
         }
     });
-
+    
     // Edit item
     _me.buttons.edit.click(function(){
         _me.form.attr('data-edit', 'true');
@@ -94,8 +95,8 @@ const RSTOCRUD = function (config){
         _me.fillForm();
         // Show modal
         _me.modal.modal('show');
-    });
-
+    });    
+    
     // Detele item
     _me.buttons.delete.click(function(){
         confirm(RSTOMessages.ConfirmDelete, function(response){
@@ -110,7 +111,7 @@ const RSTOCRUD = function (config){
                         alert(RSTOMessages.Error);
                     }
                 });
-            }
+            } 
         });
     });
 }
@@ -354,7 +355,7 @@ $.fn.extend({
             this._RSTOIsRequired = _this.attr('data-required') === 'true';
             this._RSTOIsValid = !this._RSTOIsRequired;
             this._RSTOStopValidation = false;
-
+            
             _this.keyup(_validationFunction);
             _this.on('paste', _validationFunction);
         });
@@ -404,7 +405,7 @@ $.fn.extend({
                 this._RSTOOriginalValue = null;
                 this._RSTOIsRequired = _this.attr('data-required') === 'true';
                 this._RSTOIsValid = !this._RSTOIsRequired
-
+               
                 _this.keyup(_validationFunction);
                 _this.on('paste', _validationFunction);
             }
@@ -588,7 +589,7 @@ $.fn.extend({
     /**
      * Get or set, element's original value
      * @param {String} value : Original value, if null function will return the original value
-     * @param {String} option : In case of select element, this parameter is the option label
+     * @param {String} option : In case of select element, this parameter is the option label 
      * @returns {mixed}
      */
     RSTOOriginalValue: function (value, option) {
@@ -737,7 +738,7 @@ $.fn.extend({
     },
     /**
      * Make datatable row selectable
-     * @param {jQuery} datatableDOM : Table
+     * @param {jQuery} datatableDOM : Table 
      * @param {object} data : Row's data
      * @param {boolean} multiple : Multiple selection
      * @returns {jQuery}
@@ -831,7 +832,7 @@ $(window).on('load', function () {
                     $(this).data('bs.modal').$backdrop.addClass('in').css('display', 'block');
                 })
             });
-
+    
     // Initialize modals
     $('div.rsto-modal').RSTOModal();
 });

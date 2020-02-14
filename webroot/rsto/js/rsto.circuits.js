@@ -6,7 +6,7 @@ var RSTOCircuits = {
     form: $('#rsto-circuit-form'),
     fields: {
         start: $('#rsto-circuit-start'),
-        length: $('#rsto-circuit-length'),
+        duration: $('#rsto-circuit-length'),
         adultCount: $('#rsto-circuit-adult'),
         childCount: $('#rsto-circuit-child'),
         tour: $('#rsto-circuit-tour-operator'),
@@ -16,7 +16,8 @@ var RSTOCircuits = {
         add: $('#rsto-circuit-add-btn'),
         edit: $('#rsto-circuit-edit-btn'),
         infos: $('#rsto-circuit-infos-btn'),
-        delete: $('#rsto-circuit-delete-btn')
+        delete: $('#rsto-circuit-delete-btn'),
+        configure: $('#rsto-circuit-configure-btn')
     },
     init: function () {
         var _me = this;
@@ -60,6 +61,8 @@ var RSTOCircuits = {
             _me.buttons.edit.RSTOEnable();
             _me.buttons.delete.RSTOEnable();
             _me.buttons.infos.RSTOEnable();
+            _me.buttons.configure.RSTOEnable();
+
 
             // Update data-edit-url
             _me.form.RSTODataURLQuery({'id': data.id}, 'data-edit-url');
@@ -70,6 +73,7 @@ var RSTOCircuits = {
             _me.buttons.edit.RSTODisable();
             _me.buttons.delete.RSTODisable();
             _me.buttons.infos.RSTODisable();
+            _me.buttons.configure.RSTODisable();
         });
 
         // Edit circuit
@@ -80,7 +84,7 @@ var RSTOCircuits = {
             d = _data.START;
             // Fill the form+
             _me.fields.start.RSTOOriginalValue(convertDate(d));
-            _me.fields.length.RSTOOriginalValue(_data.DURATION);
+            _me.fields.duration.RSTOOriginalValue(_data.DURATION);
             _me.fields.adultCount.RSTOOriginalValue(_data.ADULTS);
             _me.fields.childCount.RSTOOriginalValue(_data.childrens);
 
@@ -117,7 +121,86 @@ var RSTOCircuits = {
     }
 };
 
-//fonction convertir date format
+var RSTOTripChild = {
+    xCSRFToken: null,
+    table: $('#rsto-circuit-days-datatable'),
+    datatable: null,
+    listModal: $('#rsto-circuit-days-modal'),
+    configureModal: $('#rsto-circuit-day-modal'),
+    fields: {
+        hotel: $('#rsto-circuit-day-hotel'),
+        carrier: $('#rsto-circuit-day-driver'),
+        vehicle: $('#rsto-circuit-day-driver'),
+        place : $('#rsto-circuit-place')
+
+    },
+    buttons: {
+        configure: $('#rsto-circuit-day-configure-btn')
+    },
+    init: function () {
+        var circuits = RSTOCircuits;
+        var _me = RSTOTripChild;
+
+       _me.xCSRFToken = circuits.xCSRFToken;
+
+        _me.fields.place.change(function(){
+            _me.fields.hotel.RSTODataURLQuery({place: _me.fields.place.val()});
+
+        });
+       /*_me.place.onchange(function () {
+            // console.log(_me.place.value);
+       })*/
+
+        // configure dependencies
+
+        // Show daily trip
+        circuits.buttons.configure.click( function () {
+            var _selectedTrip = circuits.table.RSTODatatableSelectedData();
+            // Update trip daily datatable url, the trip child will be filtered by trips
+            _me.table.RSTODataURLQuery( {id_trips: _selectedTrip.id});
+            if (_me.datatable === null) {
+                _me.datatable = _me.table.RSTODatatable ([
+                    {"data": "day"},
+                    {"data": "date"},
+                    {"data": "place"},
+                    {"data": "hotel"},
+                    {"data": "carrier"}
+                ]);
+            } else {
+                _me.datatable.ajax.url(_me.table.attr('data-url')).load();
+            }
+            // Update modal title
+            _me.listModal.RSTOModalTitle("ITENERARY LISTE - {0}".format(_selectedTrip.id));
+
+            _me.listModal.modal('show');
+        });
+        // On selecte row in the table
+        _me.table.on('selectionChanged.rsto', function(e, data) {
+            // action
+            // display the configure button
+            _me.buttons.configure.RSTOEnable();
+        });
+        _me.buttons.configure.click( function() {
+            _me.configureModal.modal('show');
+        });
+    }
+};
+
+var RSTOTripEdit = {
+    xCSRFToken: null,
+    form:$('#rsto-service-form'),
+    fields: {
+        hotel: $('#rsto-circuit-day-hotel'),
+        carrier: $('#rsto-circuit-day-driver'),
+        vehicle: $('#rsto-circuit-day-driver'),
+        place : $('#rsto-circuit-place')
+
+    },
+    init: function () {
+
+    }
+
+}
 function convertDate(inputFormat) {
     function pad(s) { return (s < 10) ? '0' + s : s; }
     const d = new Date(inputFormat);
@@ -125,76 +208,6 @@ function convertDate(inputFormat) {
 }
 $(window).on('load', function(){
     RSTOCircuits.init();
-    var _dt = $('#rsto-circuit-datatable');
-    var _m = $('#rsto-circuit-modal');
-    var _lm = $('#rsto-circuit-days-modal');
-    var _edit = $('#rsto-circuit-edit-btn');
-    var _configure = $('#rsto-circuit-configure-btn');
-    var _add = $('#rsto-circuits-add-btn');
-    var _departure = $('#rsto-circuit-departure');
-    var _configure = $('#rsto-circuit-configure-btn');
-    var _circuitDayDt = $('#rsto-circuit-days-datatable');
-    var _configureCircuitDay = $('#rsto-circuit-day-configure-btn');
-    var _circuitDayMd = $('#rsto-circuit-day-modal');
+    RSTOTripChild.init();
 
-    // // init datatable
-     _dt.DataTable();
-     _dt.find('tr').each(function(){
-         $(this).RSTOSelectableDatatableRow(_dt, {});
-    });
-
-    //dernier ajout
-    /*_dt.table.on('selectionChanged.rsto', function (e, data) {
-        // Enable buttons
-        _dt.buttons.edit.RSTOEnable();
-    });*/
-    // // when a row is selected
-     _dt.on('selectionChanged.rsto', function(){
-         _edit.RSTOEnable();
-         _configure.RSTOEnable();
-     });
-    /*_dt.buttons.edit.click(function () {
-        var _data = _dt.table.RSTODatatableSelectedData();
-        _dt.form.attr('data-edit', 'true');
-        // Show modal
-        _dt.modal.modal('show');
-    });*/
-    // // init modals
-    _add.click(function(){
-         _m.modal('show');
-    });
-
-    // // init departure datepicker
-    _departure.datepicker();
-
-
-    // // configure circuit
-    _configure.click(function(){
-        _lm.modal('show');
-     });
-
-    // // configure circuit days datatable
-    _circuitDayDt.DataTable();
-    _circuitDayDt.find('tr').each(function(){
-        $(this).RSTOSelectableDatatableRow(_circuitDayDt, {});
-    });
-    _circuitDayDt.on('selectionChanged.rsto', function(){
-         _configureCircuitDay.RSTOEnable();
-    });
-    _configureCircuitDay.click(function(){
-         _circuitDayMd.modal('show');
-    });
-
-    $('#rsto-circuit-day-specify-datatable').RSTODatatable([
-        {data: 'type_name'}
-     ]);
-     $('#rsto-circuit-day-hotel-rooms-datatatable').DataTable();
-
-     $('#rsto-circuit-day-room-list-add-btn').click(function(){
-       $('#rsto-circuit-day-room-list-modal').modal('show');
-     });
-
-     $('#rsto-circuit-day-specify-add-btn').click(function(){
-        $('#rsto-circuit-day-specify-modal').modal('show');
-     });
 })

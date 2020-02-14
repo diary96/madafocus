@@ -57,7 +57,6 @@ $this->Html->script('/rsto/js/rsto.circuits', ['block' => true]);
                         <th><?= __('Status') ?></th>
                     </tr>
                 </thead>
-
             </table>
         </div>
     </div>

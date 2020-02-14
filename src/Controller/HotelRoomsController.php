@@ -19,11 +19,12 @@ use Cake\Database\Expression\QueryExpression;
 class HotelRoomsController extends AppController {
 
     const ROOM_TYPE_ID_SELECT = 2;
+    const MEAL_TYPE_ID_SELECT = 3;
     const CURRENCY_ID_SELECT = 1;
 
     /**
      * Hotel room's table
-     * @var \Cake\ORM\Table 
+     * @var \Cake\ORM\Table
      */
     protected $hotel_rooms;
 
@@ -93,7 +94,6 @@ class HotelRoomsController extends AppController {
         }
         $this->raise404('Invalid data!');
     }
-    
     public function deleteSellingPrice(){
         $this->jsonOnly();
         $_id = $this->request->getData('id_hotel_room_selling_price');
