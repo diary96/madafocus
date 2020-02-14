@@ -39,6 +39,7 @@ class CircuitsController extends AppController{
         'datatable' => '11.1',
         'add' => '11.2',
         'update' => '11.2',
+        'validate' => '11.2',
         'places' => '11.1',
         'carrier' => '11.1',
         'vehicletype' => '11.1',
@@ -153,6 +154,7 @@ class CircuitsController extends AppController{
         $this->set('rsto_circuit_daily_datable_url', Router::url('/circuitdaily/datatable'));
 
         $this->set('rsto_circuits_edit_url', Router::url('/circuits/update'));
+        $this->set('rsto_circuits_validate_url', Router::url('/circuits/validate'));
         $this->set('rsto_circuits_select2_data_url', Router::url('/circuits/select2'));
         $this->set('rsto_circuits_datatable_url', Router::url('/circuits/datatable'));
 
@@ -203,6 +205,16 @@ class CircuitsController extends AppController{
         // $this->contactInfos = TableRegistry::getTableLocator()->get('DirectoryContactInformations');
     }
 
+    public function validate(){
+        $this->jsonOnly();
+        $_entry = $this->trip_mere->get($this->request->getData('id'));
+        $_entry->id_status = 2;
+        if (is_object($_entry)) {
+            $this->setJSONResponse($this->trip_mere->save($_entry));
+        } else {
+            $this->raise404('Incomplete data!');
+        }
+    }
 
     public function add() {
         $this->jsonOnly();

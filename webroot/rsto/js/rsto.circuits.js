@@ -17,6 +17,7 @@ var RSTOCircuits = {
         edit: $('#rsto-circuit-edit-btn'),
         infos: $('#rsto-circuit-infos-btn'),
         delete: $('#rsto-circuit-delete-btn'),
+        validation: $('#rsto-circuit-validation-btn'),
         configure: $('#rsto-circuit-configure-btn')
     },
     init: function () {
@@ -60,6 +61,7 @@ var RSTOCircuits = {
             // Enable buttons
             _me.buttons.edit.RSTOEnable();
             _me.buttons.delete.RSTOEnable();
+            _me.buttons.validation.RSTOEnable();
             _me.buttons.infos.RSTOEnable();
             _me.buttons.configure.RSTOEnable();
 
@@ -70,8 +72,9 @@ var RSTOCircuits = {
 
         _me.table.on('draw.dt', function () {
             // Disable buttons
-            _me.buttons.edit.RSTODisable();
+            //_me.buttons.edit.RSTODisable();
             _me.buttons.delete.RSTODisable();
+            //_me.buttons.validation.RSTOEnable();
             _me.buttons.infos.RSTODisable();
             _me.buttons.configure.RSTODisable();
         });
@@ -117,6 +120,23 @@ var RSTOCircuits = {
                     });
                 }
             });
+        });
+
+        // validate circuit
+        _me.buttons.validation.click(function () {
+            confirm(RSTOMessages.Validation, function (response) {
+                if (response) {
+                    RSTOGetJSON(_me.buttons.validation.attr('data-url'), {'id': _me.table.RSTODatatableSelectedData().id}, _me.xCSRFToken, function (response) {
+                        if (response) {
+                            _me.datatable.ajax.reload();
+                            alert(RSTOMessages.Validated);
+                        } else {
+                            alert(RSTOMessages.Error);
+                        }
+                    });
+                }
+            });
+
         });
     }
 };
@@ -175,11 +195,11 @@ var RSTOTripChild = {
             _me.listModal.modal('show');
         });
         // On selecte row in the table
-        _me.table.on('selectionChanged.rsto', function(e, data) {
+        /*_me.table.on('selectionChanged.rsto', function(e, data) {
             // action
             // display the configure button
             _me.buttons.configure.RSTOEnable();
-        });
+        });*/
         _me.buttons.configure.click( function() {
             _me.configureModal.modal('show');
         });
