@@ -203,11 +203,11 @@ var RSTOTripChild = {
             _me.listModal.modal('show');
         });
         // On selecte row in the table
-        /*_me.table.on('selectionChanged.rsto', function(e, data) {
+        _me.table.on('selectionChanged.rsto', function(e, data) {
             // action
             // display the configure button
             _me.buttons.configure.RSTOEnable();
-        });*/
+        });
         _me.buttons.configure.click( function() {
             _me.configureModal.modal('show');
         });
