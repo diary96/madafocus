@@ -30,7 +30,7 @@ class CircuitDailyController extends AppController {
     public function initialize() {
         parent::initialize();
         $this->datatableTable = TableRegistry::getTableLocator()->get('ViewTripDet');
-        $this->datatableFilters = ['ID_TRIPS' => 'id_trips'];
+        $this->datatableFilters = ['id_trips' => 'id_trips'];
 
     }
 
