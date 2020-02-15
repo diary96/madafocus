@@ -22,6 +22,7 @@ class CircuitsController extends AppController{
     const MEAL_TYPE_ID_SELECT = 3;
 
     protected $trip_mere;
+    protected $view_hotel_rooms;
     protected $pageInfos = [
         'title' => 'Circuits',
         'subtitle' => 'Manage your circuits here'
@@ -36,7 +37,6 @@ class CircuitsController extends AppController{
         'select2' => '11.1',
         'datatable' => '11.1',
         'serviceSelect2' => '11.1',
-        'datatable' => '11.1',
         'add' => '11.2',
         'update' => '11.2',
         'validate' => '11.2',
@@ -113,12 +113,13 @@ class CircuitsController extends AppController{
 
     public function meal(){
         $this->jsonOnly();
-        $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('ViewSelectOptions');
+        $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('ViewSelectOptionsWithoutRestaurant');
         $_params['column'] = 'option';
-        $_params['filters'] = ['id_select' => HotelRoomsController::MEAL_TYPE_ID_SELECT, 'option'=> ['BB'], ];
+        $_params['filters'] = ['id_select' => HotelRoomsController::MEAL_TYPE_ID_SELECT ];
 
         $this->setJSONResponse($this->loadComponent('Select2', $_params)->get());
     }
+
 
     public function roomTypeSelect2(){
         $this->jsonOnly();
@@ -157,7 +158,6 @@ class CircuitsController extends AppController{
         $this->set('rsto_circuits_edit_url', Router::url('/circuits/update'));
         $this->set('rsto_circuits_validate_url', Router::url('/circuits/validate'));
         $this->set('rsto_circuits_select2_data_url', Router::url('/circuits/select2'));
-        $this->set('rsto_circuits_datatable_url', Router::url('/circuits/datatable'));
 
     }
     public function update() {

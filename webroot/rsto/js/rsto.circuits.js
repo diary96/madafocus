@@ -177,6 +177,9 @@ var RSTOTripChild = {
             _me.fields.id_hotel.RSTODataURLQuery({place: _me.fields.id_places.val()});
 
         });
+        _me.fields.id_hotel.change( function () {
+            _me.fields
+        });
        /*_me.place.onchange(function () {
             // console.log(_me.place.value);
        })*/
