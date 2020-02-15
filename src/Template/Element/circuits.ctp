@@ -280,7 +280,7 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="rsto-circuit-day-room-list-room-type-plan"><?= __('Room type') ?></label>
-                        <select name="room_type" class="form-control rsto-select" data-required="true" id="rsto-circuit-day-room-list-room-type-plan" data-x-csrf-token="<?= $x_csrf_token ?>" data-url="/rsmandimby/circuits/room_type_select2" data-placeholder="<?= __("Choose a room type") ?>"></select>
+                        <select name="room_type" class="form-control rsto-select" data-required="true" id="rsto-circuit-day-room-list-room-type-plan" data-url="<?= $rsto_circuit_room_add_url ?>" data-placeholder="<?= __("Choose a room type") ?>"></select>
                     </div>
                     <div class="form-group">
                         <label for="rsto-circuit-day-room-list-room-count"><?= __('Count') ?></label>

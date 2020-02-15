@@ -178,6 +178,7 @@ class CircuitsController extends AppController{
         $this->set('rsto_circuits_validate_url', Router::url('/circuits/validate'));
         $this->set('rsto_circuits_select2_data_url', Router::url('/circuits/select2'));
         $this->set('rsto_circuit_trip_det_edit_url', Router::url('/circuits/updatedaily'));
+        $this->set('rsto_circuit_room_add_url', Router::url('/circuits/room_type_select2'));
 
     }
 
