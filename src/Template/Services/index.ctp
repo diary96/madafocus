@@ -49,7 +49,8 @@ $this->Html->script('/rsto/js/rsto.services', ['block' => true]);
                         <th><?= __('Type') ?></th>
                         <th><?= __('Place') ?></th>
                         <th><?= __('Description') ?></th>
-                        <th><?= __('Cost price') ?></th>
+                        <th><?= __('Adult cost price') ?></th>
+                        <th><?= __('Children cost price') ?></th>
                     </tr>
                 </thead>
             </table>
@@ -88,9 +89,14 @@ $this->Html->script('/rsto/js/rsto.services', ['block' => true]);
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="rsto-service-cost-price"><?= __('Cost price') ?></label>
-                            <input name="cost_price" type="text" class="form-control numeric-validation" data-required="true" id="rsto-service-cost-price" placeholder="<?= __("Enter service cost price") ?>">
+                            <label for="rsto-service-adult-cost-price"><?= __('Adult cost price') ?></label>
+                            <input name="adult_cost_price" type="text" class="form-control numeric-validation" data-required="true" id="rsto-service-adult-cost-price" placeholder="<?= __("Enter service adult cost price") ?>">
                             <span class="help-block"><?= _('A cost price must be given when a service is not from a provider') ?></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="rsto-service-children-cost-price"><?= __('Children cost price') ?></label>
+                            <input name="children_cost_price" type="text" class="form-control numeric-validation" id="rsto-service-children-cost-price" placeholder="<?= __("Enter service children cost price") ?>">
+                            <span class="help-block"><?= _('If you leave empty, the price will be the same as the adult cost price.') ?></span>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -108,5 +114,5 @@ $this->Html->script('/rsto/js/rsto.services', ['block' => true]);
 <?= $this->fetch('rsto_service_provider_list_modal') ?>
 <?= $this->fetch('rsto_service_provider_modal') ?>
 <?= $this->fetch('rsto_service_provider_choice_modal') ?>
-<?= $this->fetch('rsto_service_price_list_modal') ?>
-<?= $this->fetch('rsto_service_cost_price_modal') ?>
+<?= $this->fetch('rsto_service_provider_price_list_modal') ?>
+<?= $this->fetch('rsto_service_provider_price_modal') ?>
