@@ -115,7 +115,8 @@ class CircuitsController extends AppController{
         $this->jsonOnly();
         $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('ViewSelectOptions');
         $_params['column'] = 'option';
-        $_params['filters'] = ['id_select' => HotelRoomsController::MEAL_TYPE_ID_SELECT];
+        $_params['filters'] = ['id_select' => HotelRoomsController::MEAL_TYPE_ID_SELECT, 'option'=> ['BB'], ];
+
         $this->setJSONResponse($this->loadComponent('Select2', $_params)->get());
     }
 
