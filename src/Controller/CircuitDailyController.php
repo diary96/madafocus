@@ -35,6 +35,8 @@ class CircuitDailyController extends AppController {
             ["data"=>"id_places"],
             ["data"=>"id_carrier"],
             ["data"=>"id_hotel"],
+            ["data"=>"id_carrier_vehicle"],
+            ["data"=>"vehicle_registration"]
         ];
         $this->datatableFilters = ['id_trips' => 'id_trips'];
         $this->tripChildInfo = TableRegistry::getTableLocator()->get('TripDet');

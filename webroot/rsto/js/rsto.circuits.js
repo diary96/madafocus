@@ -157,37 +157,74 @@ var RSTOTripChild = {
     datatable: null,
     listModal: $('#rsto-circuit-days-modal'),
     configureModal: $('#rsto-circuit-day-modal'),
-    form: $('#rsto-service-form'),
+    form: $('#rsto-trip-det-form'),
+    modalAddNewRoom: $('#rsto-circuit-day-room-list-modal'),
     fields: {
         id_hotel: $('#rsto-circuit-day-hotel'),
         carrier: $('#rsto-circuit-day-driver'),
-        type_vehicule: $('#rsto-circuit-day-type-vehicule'),
-        id_places : $('#rsto-circuit-place')
+        id_carrier_vehicle: $('#rsto_circuits_vehicle_select'),
+        id_places : $('#rsto-circuit-place'),
+        id_meal: $('#rsto-circuit-day-meal-plan')
     },
     buttons: {
-        configure: $('#rsto-circuit-day-configure-btn')
+        configure: $('#rsto-circuit-day-configure-btn'),
+        addRoom: $('#rsto-circuit-day-room-list-add-btn'),
+        addSpecify: $('#rsto-service-form-submit-btn')
     },
     init: function () {
         var circuits = RSTOCircuits;
         var _me = RSTOTripChild;
+        var initForm = function () {
+            for (variable in _me.fields) {
+                if (_me.fields.hasOwnProperty( variable )) {
 
+                   // _me.fields[variable].RSTOOriginalValue(null);
+                    if (_me.fields[variable][0].innerText) {
+                        _me.fields[variable][0].innerText = null;
+                    }
+
+                }
+                //variable.RSTOOriginalValue(undefined);
+            }
+        }
        _me.xCSRFToken = circuits.xCSRFToken;
 
+        _me.buttons.addRoom.click( function () {
+            _me.modalAddNewRoom.modal('show');
+        });
+
+       // On change place
         _me.fields.id_places.change(function(){
+            // load hotel by id_place
             _me.fields.id_hotel.RSTODataURLQuery({place: _me.fields.id_places.val()});
+/*
+            console.log(_me.fields.id_hotel);
+            _me.fields.id_hotel[0].value = null;
+            _me.fields.id_hotel[0].innerText = null;
+            _me.fields.id_hotel[0].outerText = null;
+            console.log(_me.fields.id_hotel);
+
+ */
+
 
         });
+        // On change hotel
         _me.fields.id_hotel.change( function () {
-            _me.fields
+            // load Meal plan by hotel
+            _me.fields.id_meal.RSTODataURLQuery({hotel:_me.fields.id_hotel.val()});
         });
-       /*_me.place.onchange(function () {
-            // console.log(_me.place.value);
-       })*/
+        // On change carrier
+        _me.fields.carrier.change( function() {
+            // load Vehicule by id carrier
+            _me.fields.id_carrier_vehicle.RSTODataURLQuery({carrier: _me.fields.carrier.val()});
+
+        });
 
         // configure dependencies
 
         // Show daily trip
         circuits.buttons.configure.click( function () {
+            _me.form.attr('data-edit', 'true');
             var _selectedTrip = circuits.table.RSTODatatableSelectedData();
             // Update trip daily datatable url, the trip child will be filtered by trips
             _me.table.RSTODataURLQuery( {id_trips: _selectedTrip.id});
@@ -214,15 +251,40 @@ var RSTOTripChild = {
             _me.buttons.configure.RSTOEnable();
         });
         _me.buttons.configure.click( function() {
+            // initForm();
+            _me.form.RSTOReset();
             _me.form.attr('data-edit', 'true');
             var dataSelected = _me.table.RSTODatatableSelectedData();
             console.log(dataSelected);
-            _me.fields.id_hotel.RSTOOriginalValue(dataSelected.id_hotel);
-            _me.fields.id_places.RSTOOriginalValue(dataSelected.place);
-            _me.fields.carrier.RSTOOriginalValue(dataSelected.id_carrier);
+
+            if (dataSelected.id_hotel ) _me.fields.id_hotel.RSTOOriginalValue(parseInt(dataSelected.id_hotel), dataSelected.hotel);
+            if(dataSelected.id_places)   _me.fields.id_places.RSTOOriginalValue(parseInt(dataSelected.id_places), dataSelected.place);
+            if(dataSelected.carrier) _me.fields.carrier.RSTOOriginalValue(parseInt(dataSelected.id_carrier), dataSelected.carrier);
+            if(dataSelected.id_carrier_vehicle) _me.fields.id_carrier_vehicle.RSTOOriginalValue(parseInt(dataSelected.id_carrier_vehicle), dataSelected.vehicle_registration);
+
+
+
+            _me.fields.id_hotel.RSTODataURLQuery({place: _me.fields.id_places.val()});
+            _me.fields.id_meal.RSTODataURLQuery({hotel:_me.fields.id_hotel.val()});
+            _me.fields.id_carrier_vehicle.RSTODataURLQuery({carrier: _me.fields.carrier.val()});
+
+
 
             _me.configureModal.RSTOModalTitle("Day - {0}".format(dataSelected.day));
             _me.configureModal.modal('show');
+
+            // Update data-edit-url
+            _me.form.RSTODataURLQuery({'id': dataSelected.id}, 'data-edit-url');
+        });
+        _me.form.on('submitted.rsto', function (e, response) {
+            if (response.success === true) {
+                var _editMode = _me.form.attr('data-edit') === 'true';
+                _me.configureModal.modal('hide');
+                _me.datatable.ajax.reload();
+                alert(_editMode ? RSTOMessages.Updated : RSTOMessages.Added);
+            } else {
+                alert(RSTOMessages.Error);
+            }
         });
     }
 };
