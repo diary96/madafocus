@@ -99,7 +99,7 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                         </div>
                         <div class="box-body">
                             <div class="form-group">
-                                <select name="id_places" class="form-control rsto-select" data-required="true" id="rsto-circuit-place" data-url="<?= $rsto_circuits_places_select ?>" data-placeholder="Choose a place"></select>
+                                <select name="id_places" class="form-control rsto-select2" data-required="true" id="rsto-circuit-place" data-url="<?= $rsto_circuits_places_select ?>" data-placeholder="Choose a place"></select>
                             </div>
                         </div>
                     </div>
@@ -110,7 +110,7 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                           <div class="box-body">
                             <div class="form-group">
                               <label for="rsto-circuit-day-driver"><?= __('Carrier') ?></label>
-                              <select name="carrier" class="form-control" data-required="true" id="rsto-circuit-day-driver" data-url="<?= $rsto_circuits_carrier_select ?>" data-placeholder="<?= __("Choose a carrier") ?>">
+                              <select name="carrier" class="form-control rsto-select2" data-required="true" id="rsto-circuit-day-driver" data-url="<?= $rsto_circuits_carrier_select ?>" data-placeholder="<?= __("Choose a carrier") ?>">
 
                               </select>
                             </div>
@@ -124,7 +124,7 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                             </div-->
                             <div class="form-group">
                               <label for="rsto-circuit-day-driver"><?= __('Vehicle') ?></label>
-                              <select name="id_carrier_vehicle" class="form-control" data-required="true" id="rsto_circuits_vehicle_select" data-url="<?= $rsto_circuits_vehicle_type_select ?>" data-placeholder="<?= __("Choose a car") ?>">
+                              <select name="id_carrier_vehicle" class="form-control rsto-select2" data-required="true" id="rsto_circuits_vehicle_select" data-url="<?= $rsto_circuits_vehicle_type_select ?>" data-placeholder="<?= __("Choose a car") ?>">
                               </select>
                             </div>
                         </div>
@@ -139,11 +139,11 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                         <div class="box-body">
                             <div class="form-group">
                                 <label for="rsto-circuit-day-hotel"><?= __('Hotel') ?></label>
-                                <select name="hotel" class="form-control rsto-select" data-required="true" id="rsto-circuit-day-hotel" data-url="<?= $rsto_circuits_hotel_select ?>" data-placeholder="Choose an hotel"></select>
+                                <select name="hotel" class="form-control rsto-select2" data-required="true" id="rsto-circuit-day-hotel" data-url="<?= $rsto_circuits_hotel_select ?>" data-placeholder="Choose an hotel"></select>
                             </div>
                             <div class="form-group">
                                 <label for="rsto-circuit-day-meal-plan"><?= __('Meal plan') ?></label>
-                                <select name="id_select_option" class="form-control" data-required="true" id="rsto-circuit-day-meal-plan" data-url="<?= $rsto_circuits_meal_select ?>" data-placeholder="<?= __("Choose a meal plan") ?>">
+                                <select name="id_select_option" class="form-control rsto-select2" data-required="true" id="rsto-circuit-day-meal-plan" data-url="<?= $rsto_circuits_meal_select ?>" data-placeholder="<?= __("Choose a meal plan") ?>">
                                 </select>
                             </div>
                             <div class="form-group">
