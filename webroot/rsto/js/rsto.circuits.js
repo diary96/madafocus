@@ -18,7 +18,8 @@ var RSTOCircuits = {
         infos: $('#rsto-circuit-infos-btn'),
         delete: $('#rsto-circuit-delete-btn'),
         validation: $('#rsto-circuit-validation-btn'),
-        configure: $('#rsto-circuit-configure-btn')
+        configure: $('#rsto-circuit-configure-btn'),
+        quote: $('#rsto-circuit-quote-btn'),
     },
     init: function () {
         var _me = this;
@@ -72,6 +73,7 @@ var RSTOCircuits = {
 
             _me.buttons.infos.RSTOEnable();
             _me.buttons.configure.RSTOEnable();
+            _me.buttons.quote.RSTOEnable();
 
 
             // Update data-edit-url
@@ -85,6 +87,7 @@ var RSTOCircuits = {
             //_me.buttons.validation.RSTOEnable();
             _me.buttons.infos.RSTODisable();
             _me.buttons.configure.RSTODisable();
+            _me.buttons.quote.RSTODisable();
         });
 
         // Edit circuit
@@ -146,6 +149,12 @@ var RSTOCircuits = {
                     });
                 }
             });
+
+        });
+
+        // creating Quote
+        _me.buttons.quote.click(function(){
+            window.open('./quote/', '_blank', '',false);
 
         });
     }

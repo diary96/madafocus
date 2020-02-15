@@ -23,7 +23,7 @@ $this->element('sidebar');
         <?= $this->Html->css('/font-awesome/css/font-awesome.min.css') ?>
         <?= $this->Html->css('/Ionicons/css/ionicons.min.css') ?>
         <!-- fin css communs -->
-        <!-- début css spécifiques --> 
+        <!-- début css spécifiques -->
         <?= $this->fetch('css') ?>
         <!-- fin css spécifiques -->
         <!-- début css communs : ces deux styles doivent être appelés en dernier -->

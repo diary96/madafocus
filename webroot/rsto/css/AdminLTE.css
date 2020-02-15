@@ -2692,6 +2692,20 @@ table.text-center th {
 .table.align td {
   text-align: right;
 }
+
+.table-quote > tbody > tr > td{
+  vertical-align: middle;
+}
+
+.table-quote > tbody > tr > td:last-child{
+  text-align: right;
+  font-weight: bold;
+}
+
+.table-quote > tbody > tr > td:first-child{
+  font-weight: bold;
+}
+
 /*
  * Component: Label
  * ----------------
@@ -4983,4 +4997,3 @@ table.text-center th {
 }
 
 /****** Additional ******/
-
