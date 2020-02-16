@@ -828,7 +828,7 @@ $(window).on('load', function () {
             })
             .on('hide.bs.modal', function () {
                 $('div.modal.hidden-temporarily').not($(this)).last().each(function(){
-                    $(this).removeClass('hidden-temporarily').addClass('in').css('display', 'block');
+                    $(this).removeClass('hidden-temporarily').addClass('in').css('display', 'block').css('overflow', 'scroll');
                     $(this).data('bs.modal').$backdrop.addClass('in').css('display', 'block');
                 })
             });
