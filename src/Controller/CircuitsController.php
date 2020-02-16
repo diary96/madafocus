@@ -284,22 +284,26 @@ class CircuitsController extends AppController{
             $_circuit->num_vol = $this->request->getData('num_vol');
             $_circuit->arriving_time = $this->request->getData('arriving_time');
 
-            $nb = $this->trip_det->find()->count();
-            if($nb > $_circuit->duration){
+            $nb = $this->trip_det->find()->where(['id_trips' => $_id])->count();
+            $nbAll = $this->trip_det->find()->count();
+            if($nb < $_circuit->duration){
                 $last = $this->trip_det->find()->where(['id_trips' => $_id, 'day' => $nb])->first();
+                $split = explode("/", $last->date); 
+                $date = $split[2].'-'.$split[1].'-'.$split[0];
                 for ($i=0; $i < $_circuit->duration - $nb; $i++) { 
                     $new = $this->trip_det->newEntity();
-                    $new = $last;
-                    $new->id_trip = $nb+1+$i;
-                    $new->date = date('Y-m-d', strtotime($last->date. ' + '.$i.' days'));
+                    $new->id_trips = $last->id_trips;
+                    $new->id_trip = ($nbAll+1+$i).'';
+                    $new->day = $nb+1+$i;
+                    $new->date = date('Y-m-d', strtotime($date. ' + '.($i+1).' days'));
                     $this->trip_det->save($new);
                 }
             }
-            else if($nb < $_circuit->duration){
+            else if($nb > $_circuit->duration){
                 $list = $this->trip_det->find()->where(['id_trips' => $_id])->order(['day' => 'DESC'])->toArray();
                 for ($i=0; $i < $nb - $_circuit->duration; $i++) { 
                     // $this->trip_det->query()->delete()->where(['id' => $_id, 'day' => $list[$i]->day])->execute();
-                    $this->trip_det->query()->delete($list[$i]);
+                    $this->trip_det->delete($list[$i]);
                 }
             }
             $this->setJSONResponse([
