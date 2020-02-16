@@ -88,7 +88,8 @@ class CircuitsController extends AppController{
     }
     public function places() {
         $this->jsonOnly();
-        $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('Places');
+        $_params = $this->request->getData();
+        $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('ViewPlaces');
         $_params['column'] = 'name';
         $this->setJSONResponse($this->loadComponent('Select2', $_params)->get());
     }
