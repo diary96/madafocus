@@ -39,7 +39,7 @@ $(window).on('load', function(){
 
         if(tripDet[i].description.length > 0){
             desc += '<td>' + tripDet[i].description[0];
-            price += '<td>' + tripDet[i].prix[0];
+            price += '<td>' + trip.currency_name + ' ' + tripDet[i].prix[0];
         }
         if(tripDet[i].description.length == 1){
             desc += '</td>';
@@ -48,11 +48,11 @@ $(window).on('load', function(){
         for (let k = 1; k < tripDet[i].description.length; k++) {
             if(k == tripDet[i].description.length-1){
                 desc += '<br>' + tripDet[i].description[k] + '</td>';
-                price += '<br>' + tripDet[i].prix[k] + '</td></tr>';
+                price += '<br>' + trip.currency_name + ' ' + tripDet[i].prix[k] + '</td></tr>';
                 continue;
             }
             desc += '<br>' + tripDet[i].description[k];
-            price += '<br>' + tripDet[i].prix[k];
+            price += '<br>' + trip.currency_name + ' ' + tripDet[i].prix[k];
         }
         html += desc;
         html += price;
@@ -61,5 +61,5 @@ $(window).on('load', function(){
         
     $('#tquote tbody').append(html);
 
-    $('#total').text(trip.total);
+    $('#total').text(trip.currency_name+' '+trip.total);
 })

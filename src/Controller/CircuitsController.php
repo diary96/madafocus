@@ -213,8 +213,9 @@ class CircuitsController extends AppController{
         $trip->total = 0;
         foreach ($tripDetData as $det) {
             if($det != null){
-                $carPrice = $car_price->find()->where(['id_carrier_vehicle' => $det->id_carrier_vehicle])->first();
-                $listRoomPrice = $_rooms->find()->where(['id_trip' => $det->id])->toArray();
+                $carPrice = $car_price->find()->where(['id_carrier_vehicle' => $det->id_carrier_vehicle, 'id_currency' => $trip->currency])->first();
+                $trip->currency_name = $carPrice['currency_name'];
+                $listRoomPrice = $_rooms->find()->where(['id_trip' => $det->id, 'id_currency' => $trip->currency])->toArray();
                 // $listRoomPrice = $_rooms->find()->where(['id_trip' => $det->id_trip])->toArray();
                 $price = 0;
                 foreach ($listRoomPrice as $room) {
@@ -241,11 +242,11 @@ class CircuitsController extends AppController{
                     $service = $_services->find()->where(['id' => $specify->ID_SPECIFY])->first();
                     $price = 0;
                     if($service->from_provider == 1){
-                        $provider = $_provider_price->find()->where(['service' => $service->id])->first();
+                        $provider = $_provider_price->find()->where(['service' => $service->id, 'id_currency' => $trip->currency])->first();
                         $price = ($specify->ADULT * $provider['adult']) + ($specify->CHILDREN * $provider['children']);
                     }
                     else{
-                        $servicePrice = $_service_price->find()->where(['id_service' => $service->id])->first();
+                        $servicePrice = $_service_price->find()->where(['id_service' => $service->id, 'id_currency' => $trip->currency])->first();
                         $price = ($specify->ADULT + $specify->CHILDREN) * $servicePrice['price'];
                     }
                     $det->description[] = $service['type_name'];
