@@ -528,7 +528,12 @@ $.fn.extend({
                             _this.trigger('submitted.rsto', [response]);
                         },
                         'error': function (xhr) {
-                            var _response = JSON.parse(xhr.responseText);
+                            try{
+                                var _response = JSON.parse(xhr.responseText);
+                            } catch(e)
+                            {
+                                alert(xhr.responseText, 'error');
+                            }
                             var _message = '<b>{0}</b><br>File :{1}<br>Line: {2}'.format(_response.message, _response.file, _response.line);
                             alert(_message, 'danger');
                         }

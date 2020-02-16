@@ -31,6 +31,11 @@ $this->Html->script('/rsto/js/rsto.parks', ['block' => true]);
                 </button>
             <?php endif ?>
             <?php if (CAN_7_2) : ?>
+                <button class="btn btn-app disabled" id="rsto-park-guidance-btn" disabled>
+                    <i class="fa fa-user-circle"></i> <?= __('Guidances') ?>
+                </button>
+            <?php endif ?>
+            <?php if (CAN_7_2) : ?>
                 <button class="btn btn-app disabled" id="rsto-park-delete-btn" data-url="<?= $rsto_park_delete_url ?>" disabled>
                     <i class="fa fa-trash"></i> <?= __('Delete') ?>
                 </button>

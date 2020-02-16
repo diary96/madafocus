@@ -9,7 +9,8 @@ const RSTOService = {
         place: $('#rsto-service-place'),
         type: $('#rsto-service-type'),
         description: $('#rsto-service-description'),
-        price: $('#rsto-service-cost-price'),
+        adultPrice: $('#rsto-service-adult-cost-price'),
+        childrenPrice: $('#rsto-service-children-cost-price'),
         fromProvider: $('#rsto-service-from-provider')
     },
     buttons: {
@@ -17,6 +18,7 @@ const RSTOService = {
         edit: $('#rsto-service-edit-btn'),
         prices: $('#rsto-service-prices-btn'),
         providers: $('#rsto-service-providers-btn'),
+        reliance: $('#rsto-service-dependencies-btn'),
         delete: $('#rsto-service-delete-btn')
     },
     init: function(){
@@ -28,17 +30,20 @@ const RSTOService = {
             {'data': 'type_name'},
             {'data': 'place_name'},
             {'data': 'description'},
-            {'data': 'cost_price'}
+            {'data': 'adult_cost_price'},
+            {'data': 'children_cost_price'}
         ]);
         
         // When "from provider" checkbox is changed
         _me.fields.fromProvider.change(function(){
             if(this.checked){
-                _me.fields.price.val(0).closest('div.form-group').fadeOut(0);
+                _me.fields.adultPrice.val(0).closest('div.form-group').fadeOut(0);
+                _me.fields.childrenPrice.val(0).closest('div.form-group').fadeOut(0);
             } else {
-                _me.fields.price.val('').closest('div.form-group').fadeIn(0);
+                _me.fields.adultPrice.val('').closest('div.form-group').fadeIn(0);
+                _me.fields.childrenPrice.val('').closest('div.form-group').fadeIn(0);
             }
-            _me.fields.price.trigger('keyup');
+            _me.fields.adultPrice.trigger('keyup');
         });
         
         // Add service
@@ -59,12 +64,26 @@ const RSTOService = {
             // Enable buttons
             _me.buttons.edit.RSTOEnable();
             _me.buttons.delete.RSTOEnable();
+            _me.buttons.reliance.RSTOEnable();
             if(data.from_provider === 1){
                 _me.buttons.providers.RSTOEnable();
                 _me.buttons.prices.RSTODisable();
             } else {
                 _me.buttons.prices.RSTOEnable();
                 _me.buttons.providers.RSTODisable();
+            }
+            
+            if(RSTOServiceProviderChoice){
+                var _choice = RSTOServiceProviderChoice;
+                _choice.fields.service.val(data.id);
+                _choice.fields.provider.RSTODataURLQuery({'service': data.id});
+            }
+            
+            if(RSTOServiceReliance){
+                var _dependencies = RSTOServiceReliance;
+                _dependencies.table.RSTODataURLQuery({'id_service': data.id});
+                _dependencies.fields.dependency.RSTODataURLQuery({'id_service': data.id});
+                _dependencies.fields.dependent.val(data.id);
             }
             
             // Update data-edit-url
@@ -77,6 +96,7 @@ const RSTOService = {
             _me.buttons.delete.RSTODisable();
             _me.buttons.prices.RSTODisable();
             _me.buttons.providers.RSTODisable();
+            _me.buttons.reliance.RSTODisable();
         });
         
         // Edit service
@@ -88,7 +108,8 @@ const RSTOService = {
             _me.fields.fromProvider.RSTOOriginalValue(_data.from_provider === 1);
             _me.fields.place.RSTOOriginalValue(_data.id_place, _data.place_name);
             _me.fields.type.RSTOOriginalValue(_data.id_type, _data.type_name);
-            _me.fields.price.RSTOOriginalValue(_data.cost_price);
+            _me.fields.adultPrice.RSTOOriginalValue(_data.adult_cost_price);
+            _me.fields.childrenPrice.RSTOOriginalValue(_data.children_cost_price);
             _me.fields.description.RSTOOriginalValue(_data.description);
             
             // Show modal
@@ -111,6 +132,7 @@ const RSTOService = {
                 } 
             });
         });
+        
     }
 };
 //</editor-fold>
@@ -152,7 +174,7 @@ const RSTOServiceSellingPrice = {
         // Init datatable
         _service.buttons.prices.click(function(){
             var _selectedService = _service.table.RSTODatatableSelectedData();
-            if(_selectedService.from_provider){
+            if(_selectedService.from_provider === 0){
                 if(_me.datatable === null){
                     _me.datatable= _me.table.RSTODatatable([
                         {'data': 'currency_name'},
@@ -245,7 +267,8 @@ const RSTOServiceProvider = {
         description: $('#rsto-service-provider-description'),
         phoneNumber: $('#rsto-service-provider-booking-phone-number'),
         emailAddress: $('#rsto-service-provider-booking-email-address'),
-        costPrice: $('#rsto-service-provider-cost-price'),
+        adultCostPrice: $('#rsto-service-provider-adult-cost-price'),
+        childrenCostPrice: $('#rsto-service-provider-children-cost-price'),
         mustBook: $('#rsto-service-provider-must-book')
     },
     buttons: {
@@ -277,8 +300,17 @@ const RSTOServiceProvider = {
                     {'data': 'description'},
                     {'data': 'booking_phone_number'},
                     {'data': 'booking_email_address'},
-                    {'data': 'cost_price'}
+                    {'data': 'adult_cost_price'},
+                    {'data': 'children_cost_price'},
                 ]);
+                _me.datatable.on('selectionChanged.rsto', function(e, data){
+                    if(RSTOServiceProviderSellingPrices){
+                        var _sellingPrices = RSTOServiceProviderSellingPrices;
+                        _sellingPrices.table.RSTODataURLQuery({'service_provider': data.id});
+                        _sellingPrices.fields.currency.RSTODataURLQuery({'service_provider': data.id});
+                        _sellingPrices.fields.serviceProvider.val(data.id);
+                    }
+                });
             } else {
                 _me.datatable.ajax.url(_me.table.attr('data-url')).load();
             }
@@ -334,7 +366,8 @@ const RSTOServiceProvider = {
             _me.fields.phoneNumber.RSTOOriginalValue(_data.booking_phone_number);
             _me.fields.emailAddress.RSTOOriginalValue(_data.booking_email_address);
             _me.fields.mustBook.RSTOOriginalValue(_data.must_book === 1);
-            _me.fields.costPrice.RSTOOriginalValue(_data.cost_price);
+            _me.fields.adultCostPrice.RSTOOriginalValue(_data.adult_cost_price);
+            _me.fields.childrenCostPrice.RSTOOriginalValue(_data.children_cost_price);
             
             // Show modal
             _me.modal.modal('show');
@@ -361,6 +394,16 @@ const RSTOServiceProvider = {
             _me.modal.modal('hide');
             RSTOServiceProviderChoice.modal.modal('show');
         });
+        
+        // Manage provider price
+        if(RSTOServiceProviderSellingPrices){
+            var _sellingPrices = RSTOServiceProviderSellingPrices;
+            _me.buttons.prices.click(function(){
+                _sellingPrices.listModal.modal('show');
+                _sellingPrices.datatable.ajax.url(_sellingPrices.table.attr('data-url')).load();
+            });
+            
+        }
     }
 };
 const RSTOServiceProviderChoice = {
@@ -368,9 +411,11 @@ const RSTOServiceProviderChoice = {
     modal: $('#rsto-service-provider-choice-modal'),
     form: $('#rsto-service-provider-choice-form'),
     fields: {
+        service: $('#rsto-service-provider-choice-service'),
         provider: $('#rsto-service-provider-choice-provider'),
         costPrice: $('#rsto-service-provider-choice-cost-price'),
-        mustBook: $('#rsto-service-provider-choice-must-book')
+        mustBook: $('#rsto-service-provider-choice-must-book'),
+        isDefault: $('#rsto-service-provider-choice-is-default')
     },
     buttons: {
         add: $('#rsto-service-provider-choice-add-btn')
@@ -379,63 +424,194 @@ const RSTOServiceProviderChoice = {
         var _me = this;
         var _provider = RSTOServiceProvider;
         
-        // Add new provider
+        // Add service provider
         _me.buttons.add.click(function(){
             _me.modal.modal('hide');
             _provider.modal.modal('show');
         });
+        
+        // Form submission
+        _me.form.on('submitted.rsto', function(response){
+            var _editMode = _me.form.attr('data-edit') === 'true';
+            _me.modal.modal('hide');
+            _me.datatable.ajax.reload();
+            alert(_editMode ? RSTOMessages.Updated : RSTOMessages.Added);
+        });
     }
 };
 // </editor-fold>
-// <editor-fold desc="Prices" defaultstate="collapsed">
-RSTOServiceCostPrice = {
-    xCRSFToken: null,
-    table: $('#rsto-service-cost-price-datatable'),
+// <editor-fold desc="Provider's prices" defaultstate="collapsed">
+const RSTOServiceProviderSellingPrices = {
+    xCSRFToken: null,
+    table: $('#rsto-service-provider-selling-price-datatable'),
     datatable: null,
-    listModal: $('#rsto-service-cost-price-list-modal'),
-    modal: $('#rsto-service-cost-price-modal'),
+    listModal: $('#rsto-service-provider-price-list-modal'),
+    modal: $('#rsto-service-provider-price-modal'),
+    form: $('#rsto-service-provider-selling-price-form'),
+    fields: {
+        serviceProvider: $('#rsto-service-provider-selling-price-service-provider'),
+        currency: $('#rsto-service-provider-selling-price-currency'),
+        adult: $('#rsto-service-provider-selling-price-adult'),
+        children: $('#rsto-service-provider-selling-price-children')
+    },
     buttons: {
-        //add: $('#'),
-        //edit: $('#'),
-        //delete: $('#')
+        add: $('#rsto-service-provider-price-add-btn'),
+        edit: $('#rsto-service-provider-price-edit-btn'),
+        delete: $('#rsto-service-provider-price-delete-btn')
     },
     init: function(){
-        var _me = this;
-        var _provider = RSTOServiceProvider;
-        var _service = RSTOService;
+        var _me = RSTOServiceProviderSellingPrices;
+        _me.xCSRFToken = _me.form.attr('data-x-csrf-token');
+        _me.datatable = _me.table.RSTODatatable([
+            {'data': 'currency'},
+            {'data': 'adult'},
+            {'data': 'children'}
+        ]);
         
-        // When a provider is selected
-        _provider.table.on('selectionChanged', function(e, data){
-            _me.table.RSTODataURLQuery({'id_service_provider': data.id});
+        // Add selling price
+        _me.buttons.add.click(function(){
+            _me.modal.modal('show');
         });
         
-        // Show price list
-        _provider.buttons.prices.click(function(){
-            _me.listModal.RSTOModalTitle("Cost prices - " + _service.table.RSTODatatableSelectedData().type_name);
-            
-            // Init datatble
-            if(_me.datatable === null){
-                _me.datatable = _me.table.RSTODatatable([
-                    {'data': 'from'},
-                    {'data': 'to'},
-                    {'data': 'adult'},
-                    {'data': 'children'}
-                ]);
-            } else {
-                _me.datatable.ajax.url(_me.table.attr('data-url')).load();
-            }
-            
-            _me.listModal.modal('show');
+        _me.form.on('submitted.rsto', function(e, data){
+            var _editMode = _me.form.attr('data-edit') === 'true';
+            _me.modal.modal('hide');
+            _me.datatable.ajax.reload();
+            alert(_editMode ? RSTOMessages.Updated : RSTOMessages.Added);
+        });
+        
+        _me.table.on('selectionChanged.rsto', function(e, data){
+            _me.buttons.edit.RSTOEnable();
+            _me.buttons.delete.RSTOEnable();
+            _me.form.RSTODataURLQuery({'id_provider_selling_price': data.id}, 'data-edit-url');
+        });
+        
+        _me.table.on('draw.dt', function(){
+            _me.buttons.edit.RSTODisable();
+            _me.buttons.delete.RSTODisable();
+        });
+        
+        // Editint price
+        _me.buttons.edit.click(function(){
+            _me.form.attr('data-edit', 'true');
+            var _data = _me.table.RSTODatatableSelectedData();
+            _me.fields.currency.RSTOOriginalValue(_data.id_currency, _data.currency);
+            _me.fields.adult.RSTOOriginalValue(_data.adult);
+            _me.fields.children.RSTOOriginalValue(_data.children);
+            _me.modal.modal('show');
+        });
+        
+        // Deleting price
+        _me.buttons.delete.click(function(){
+            confirm('Do your really want to delete this item ?', function(response){
+                if(response === true){
+                    RSTOGetJSON(_me.buttons.delete.attr('data-url'), {'id_provider_selling_price': _me.table.RSTODatatableSelectedData().id}, _me.xCSRFToken, function(response){
+                        if(response === true || response === 1){
+                            _me.datatable.ajax.reload();
+                            alert(RSTOMessages.Deleted);
+                        } else {
+                            alert(RSTOMessages.Error);
+                        }
+                    });
+                } 
+            });
         });
     }
 };
 
 
+// </editor-fold>
+// <editor-fold desc="Service reliance" defaultstate="collapsed">
+const RSTOServiceReliance = {
+    xCSRFToken: null,
+    table: $('#rsto-service-dependencies-datatable'),
+    datatable: null,
+    listModal: $('#rsto-service-provider-dependencies-list-modal'),
+    modal: $('#rsto-service-dependency-modal'),
+    form: $('#rsto-service-dependency-form'),
+    fields: {
+        dependent: $('#rsto-service-dependency-dependent'),
+        dependency: $('#rsto-service-dependency-denpendency'),
+        ratio: $('#rsto-service-dependency-ratio')
+    },
+    buttons: {
+        add: $('#rsto-service-dependency-add-btn'),
+        edit: $('#rsto-service-dependency-edit-btn'),
+        delete: $('#rsto-service-dependency-delete-btn')
+    },
+    init: function(){
+        var _me = RSTOServiceReliance;
+        _me.xCSRFToken = _me.form.attr('data-x-csrf-token');
+        
+        _me.datatable = _me.table.RSTODatatable([
+            {'data': 'type_name'},
+            {'data': 'description'},
+            {'data': 'ratio'}
+        ]);
+        
+        RSTOService.buttons.reliance.click(function(){
+            _me.datatable.ajax.url(_me.table.attr('data-url')).load();
+            _me.listModal.modal('show');
+        });
+        
+        // Add dependency
+        _me.buttons.add.click(function(){
+            _me.modal.modal('show');
+        });
+        
+        _me.table.on('selectionChanged.rsto',function(e, data){
+            _me.buttons.edit.RSTOEnable();
+            _me.buttons.delete.RSTOEnable();
+            _me.form.RSTODataURLQuery({'id_service_dependency': data.id}, 'data-edit-url');
+        });
+        
+        _me.table.on('draw.dt', function(){
+            _me.buttons.edit.RSTODisable();
+            _me.buttons.delete.RSTODisable();
+        });
+        
+        // When form is submitted
+        _me.form.on('submitted.rsto', function(e, response){
+            var _editMode = _me.form.attr('data-edit') === 'true';
+            _me.modal.modal('hide');
+            _me.datatable.ajax.reload();
+            alert(_editMode ? RSTOMessages.Updated : RSTOMessages.Added);
+        });
+        
+        // Update dependency
+        _me.buttons.edit.click(function(){
+            _me.form.attr('data-edit', 'true');
+            var _data = _me.table.RSTODatatableSelectedData();
+            
+            _me.fields.dependency.RSTOOriginalValue(_data.id_dependency, _data.dependency);
+            _me.fields.ratio.RSTOOriginalValue(_data.ratio);
+            
+            _me.modal.modal('show');
+        });
+        
+        // Deleting price
+        _me.buttons.delete.click(function(){
+            confirm('Do your really want to delete this item ?', function(response){
+                if(response === true){
+                    RSTOGetJSON(_me.buttons.delete.attr('data-url'), {'id_service_dependency': _me.table.RSTODatatableSelectedData().id}, _me.xCSRFToken, function(response){
+                        if(response === true || response === 1){
+                            _me.datatable.ajax.reload();
+                            alert(RSTOMessages.Deleted);
+                        } else {
+                            alert(RSTOMessages.Error);
+                        }
+                    });
+                } 
+            });
+        });
+    }
+};
 // </editor-fold>
 $(window).on('load', function(){
     RSTOService.init();
     RSTOServiceSellingPrice.init();
     RSTOServiceProvider.init();
     RSTOServiceProviderChoice.init();
-    RSTOServiceCostPrice.init();
+    RSTOServiceProviderSellingPrices.init();
+    RSTOServiceReliance.init();
 });

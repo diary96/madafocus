@@ -102,13 +102,20 @@ class ServiceComponent extends Component{
     }
     
     private function addServiceProvider($data, $provider){
+        $_adult_cost_price = $this->RSTO->RemoveThousandSeparator($data['adult_cost_price']);
         $_service_provider = $this->serviceProviders->newEntity([
             'service' => $data['service'],
             'provider' => $provider->id_provider,
             'is_default' => array_key_exists('is_default', $data) ? 1 : 0,
-            'cost_price' => $this->RSTO->RemoveThousandSeparator($data['cost_price'])
+            'adult_cost_price' => $_adult_cost_price,
+            'children_cost_price' => $data['children_cost_price'] === null ? $_adult_cost_price : $this->RSTO->RemoveThousandSeparator($data['children_cost_price'])
         ]);
         return $this->serviceProviders->save($_service_provider);
+    }
+    
+    public function choose($data){
+        $_provider = (object)['id_provider' => $data['provider']];
+        return $this->addServiceProvider($data, $_provider);
     }
     
     public function delete($id){
@@ -149,7 +156,8 @@ class ServiceComponent extends Component{
     public function update($id, $data){
         $_service_provider = $this->serviceProviders->get($id);
         if(is_object($_service_provider)){
-            $_service_provider->cost_price = $this->RSTO->RemoveThousandSeparator($data['cost_price']);
+            $_service_provider->adult_cost_price = $this->RSTO->RemoveThousandSeparator($data['adult_cost_price']);
+            $_service_provider->children_cost_price = $data['adult_cost_price'] === '' ? $_service_provider->adult_cost_price : $this->RSTO->RemoveThousandSeparator($data['children_cost_price']);
             $this->serviceProviders->save($_service_provider);
             
             $_provider = $this->providers->get($_service_provider->provider);
