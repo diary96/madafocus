@@ -179,6 +179,7 @@ var RSTOTripChild = {
         id_places : $('#rsto-circuit-place'),
         id_meal: $('#rsto-circuit-day-meal-plan'),
 
+        id_selected: $('#rsto-circuit-day-room-id'),
         id_type_room: $('#rsto-circuit-day-room-list-room-type-plan'),
         id_count_room: $('#rsto-circuit-day-room-count-plan'),
         id_pax_room: $('#rsto-circuit-day-pax-plan'),
@@ -186,7 +187,7 @@ var RSTOTripChild = {
     buttons: {
         configure: $('#rsto-circuit-day-configure-btn'),
         addRoom: $('#rsto-circuit-day-room-list-add-btn'),
-        editRoom: $('#rsto-circuit-day-room-form-submit-btn'),
+        editRoom: $('#rsto-circuit-edit-room'),
         addSpecify: $('#rsto-service-form-submit-btn'),
         deleteRoon: $('#rsto-circuit-delect-room'),
         saveAddRoom: $('#rsto-circuit-day-room-form-submit-btn'),
@@ -210,11 +211,19 @@ var RSTOTripChild = {
         }
        _me.xCSRFToken = circuits.xCSRFToken;
         _me.buttons.addRoom.click( function () {
+            _me.formAddRoom.RSTOReset();
             _me.fields.id_type_room.RSTODataURLQuery({hotel:_me.fields.id_hotel.val()});
             _me.modalAddNewRoom.modal('show');
         });
         _me.buttons.editRoom.click( function() {
+            _me.formAddRoom.RSTOReset();
+            var selectedData = _me.tableRoom.RSTODatatableSelectedData();
+            console.log(selectedData);
+            _me.fields.id_selected.val(selectedData.id);
             _me.fields.id_type_room.RSTODataURLQuery({hotel:_me.fields.id_hotel.val()});
+            _me.fields.id_type_room.RSTOOriginalValue(selectedData.id_type, selectedData.type_name);
+            _me.fields.id_count_room.RSTOOriginalValue(selectedData.count);
+            _me.fields.id_pax_room.RSTOOriginalValue(selectedData.pax)
             _me.modalAddNewRoom.modal('show');
         });
 
@@ -348,10 +357,27 @@ var RSTOTripChild = {
         // Ajout dans un object temporaire pour le traitement necessaire
         _me.buttons.saveAddRoom.click( function () {
             var _selectedTrip = _me.table.RSTODatatableSelectedData();
+            console.log(_me.fields.id_selected.val());
+            if(_me.fields.id_selected.val()!=="") {
+                var index = 0;
+                const length = _me.dataRoomTemp.length;
+                for (var i=0;i<length;i++) {
+                    const row = _me.dataRoomTemp[i];
+                    if (row.id == _me.fields.id_selected.val()) {
+                        row.id_type = _me.fields.id_type_room.val();
+                        row.type_name =_me.fields.id_type_room[0].innerText;
+                        row.count = _me.fields.id_count_room.val();
+                        row.pax = _me.fields.id_pax_room.val();
+                        loadData();
+                        _me.modalAddNewRoom.modal('hide');
+                        return;
+                    }
+                }
+            }
             // recuperation des valeurs dans fields
             var id_type = _me.fields.id_type_room.val();
             var type_libelle = _me.fields.id_type_room[0].innerText;
-            var count = _me.fields.id_count_room.val();
+            var count = _me.fields.id_count_room.val()
             var pax = _me.fields.id_pax_room.val();
             // Mettre les données dans un objet de la meme structure que dataset
             var objectTemp = {
@@ -388,6 +414,27 @@ var RSTOTripChild = {
             } else {
                 alert(RSTOMessages.Error);
             }
+        });
+        _me.form.on('submit', function(e) {
+            const url = _me.form.attr('data-room-url');
+            console.log(_me.dataRoomTemp);
+            $.ajax({
+                url: url,
+                type: 'post',
+                dataType: 'json',
+                data: JSON.stringify(_me.dataRoomTemp),
+                headers: {
+                    'x-csrf-token': _me.xCSRFToken,
+                    'Content-Type': 'application/json'
+                },
+                success: function(output) {
+                    if (output){
+                        console.log(output);
+                        _me.dataRoomTemp = output;
+                        loadData();
+                    }
+                }
+            });
         });
     }
 };

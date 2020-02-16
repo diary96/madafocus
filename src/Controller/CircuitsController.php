@@ -8,6 +8,7 @@
 
 namespace App\Controller;
 
+use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 
@@ -25,6 +26,7 @@ class CircuitsController extends AppController{
     protected $hotels;
     protected $trip_det;
     protected $view_room_trip_dep_hotel;
+    protected $rooms;
     protected $pageInfos = [
         'title' => 'Circuits',
         'subtitle' => 'Manage your circuits here'
@@ -48,7 +50,8 @@ class CircuitsController extends AppController{
         'hotel' => '11.1',
         'meal' => '11.1',
         'updatedaily' => '11.1',
-        'roomHotel' => '11.1'
+        'roomHotel' => '11.1',
+        'editCircuit' => '11.1',
     ];
 
     /**
@@ -183,6 +186,7 @@ class CircuitsController extends AppController{
         $this->set('rsto_circuit_trip_det_edit_url', Router::url('/circuits/updatedaily'));
         $this->set('rsto_circuit_room_add_url', Router::url('/circuits/room_type_select2'));
         $this->set('rsto_circuit_room_hotel_datatable_url', Router::url('/circuits/room_hotel'));
+        $this->set('rsto_circuit_edit_room_hotel', Router::url('/circuits/edit_circuit'));
 
     }
 
@@ -230,6 +234,18 @@ class CircuitsController extends AppController{
 
 
     }
+    public function editCircuit() {
+        $this-> jsonOnly();
+        $data = $this->request->input('json_decode', 'true');
+        echo $data[0]['id'];
+        // foreach (data as ))
+        $this->setJSONResponse([
+            'success'=> true,
+            'row'=>  $data
+        ]);
+        return;
+
+    }
     public function initialize() {
         parent::initialize();
         $this->select2Table = TableRegistry::getTableLocator()->get('TourOperators');
@@ -243,6 +259,7 @@ class CircuitsController extends AppController{
         $this->hotels = TableRegistry::getTableLocator()->get('Hotels');
         $this->trip_det = TableRegistry::getTableLocator()->get('TripDet');
         $this->view_room_trip_dep_hotel = TableRegistry::getTableLocator()->get('ViewRoomTripDepHotel');
+        $this->rooms = TableRegistry::getTableLocator()->get('Room');
 
         $this->datatableAdditionalColumns = [
              ['data' => 'ADULTS'],
