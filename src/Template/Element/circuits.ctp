@@ -124,7 +124,7 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                             </div-->
                             <div class="form-group">
                               <label for="rsto-circuit-day-driver"><?= __('Vehicle') ?></label>
-                              <select name="id_carrier_vehicle" class="form-control rsto-select2" data-required="true" id="rsto_circuits_vehicle_select" data-url="<?= $rsto_circuits_vehicle_type_select ?>" data-placeholder="<?= __("Choose a car") ?>">
+                              <select name="type_vehicle" class="form-control rsto-select2" data-required="true" id="rsto_circuits_vehicle_select" data-url="<?= $rsto_circuits_vehicle_type_select ?>" data-placeholder="<?= __("Choose a car") ?>">
                               </select>
                             </div>
                         </div>
@@ -143,7 +143,7 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                             </div>
                             <div class="form-group">
                                 <label for="rsto-circuit-day-meal-plan"><?= __('Meal plan') ?></label>
-                                <select name="id_select_option" class="form-control rsto-select2" data-required="true" id="rsto-circuit-day-meal-plan" data-url="<?= $rsto_circuits_meal_select ?>" data-placeholder="<?= __("Choose a meal plan") ?>">
+                                <select name="id_select_option" class="form-control rsto-select2" data-required="true" id="rsto-circuit-meal-plan" data-url="<?= $rsto_circuits_meal_select ?>" data-placeholder="<?= __("Choose a meal plan") ?>">
                                 </select>
                             </div>
                             <div class="form-group">
@@ -269,7 +269,7 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                     <input type="hidden" class="form-control" id="rsto-circuit-day-room-id">
                     <div class="form-group">
                         <label for="rsto-circuit-day-room-list-room-type-plan"><?= __('Room type') ?></label>
-                        <select name="room_type" class="form-control rsto-select" data-required="true" id="rsto-circuit-day-room-list-room-type-plan" data-url="<?= $rsto_circuit_room_add_url ?>" data-placeholder="<?= __("Choose a room type") ?>"></select>
+                        <select name="id" class="form-control rsto-select" data-required="true" id="rsto-circuit-day-room-list-room-type-plan" data-url="<?= $rsto_circuit_room_add_url ?>" data-placeholder="<?= __("Choose a room type") ?>"></select>
                     </div>
                     <div class="form-group">
                         <label for="rsto-circuit-day-room-list-room-count"><?= __('Count') ?></label>

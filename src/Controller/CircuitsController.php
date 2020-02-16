@@ -11,6 +11,7 @@ namespace App\Controller;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
+use PhpParser\Node\Expr\Array_;
 
 /**
  * Description of CircuitsController
@@ -88,7 +89,7 @@ class CircuitsController extends AppController{
     }
     public function places() {
         $this->jsonOnly();
-        $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('Places');
+        $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('ViewPlaces');
         $_params['column'] = 'name';
         $this->setJSONResponse($this->loadComponent('Select2', $_params)->get());
     }
@@ -104,9 +105,9 @@ class CircuitsController extends AppController{
     public function vehicletype(){
         $this->jsonOnly();
         $id_carrier = $this->request->getQuery('carrier', 'null');
-        $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('carrier_vehicles');
-        $_params['column'] = 'vehicle_registration';
-        $_params['filters'] = ['carrier'=> $id_carrier];
+        $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('ViewSelectOptions');
+        $_params['column'] = 'option';
+        $_params['filters'] = ['id_select'=> CircuitsController::ID_TYPE_VEHICLE];
         $this->setJSONResponse($this->loadComponent('Select2', $_params)->get());
     }
 
@@ -220,9 +221,10 @@ class CircuitsController extends AppController{
         if ( is_object($_trip_det)) {
             $_trip_det->id_places = $this->request->getData('id_places');
             $_trip_det->carrier= $this->request->getData('carrier');
-            $_trip_det->type_vehicule= $this->request->getData('type_vehicule');
+            $_trip_det->type_vehicule= $this->request->getData('type_vehicle');
             $_trip_det->hotel= $this->request->getData('hotel');
             $_trip_det->id_carrier_vehicle= $this->request->getData('id_carrier_vehicle');
+            $_trip_det->id_select_option= $this->request->getData('id_select_option');
 
             $this->setJSONResponse([
                'success'=> $this->trip_det->save($_trip_det)  !== false,
@@ -237,10 +239,24 @@ class CircuitsController extends AppController{
     public function editCircuit() {
         $this-> jsonOnly();
         $data = $this->request->input('json_decode', 'true');
-        echo $data[0]['id'];
-        // foreach (data as ))
+        $id_trip = $this->request->getQuery('id_trip', '');
+        $length = sizeof($data);
+        $success = true;
+        $this->rooms->deleteAll(['ID_TRIP' => $id_trip]);
+        for ($i=0; $i<$length;$i++){
+            $entity = new Entity();
+            if (array_key_exists('id',$data[$i])) {
+                $entity->ID_ROOM = $data[$i]['id'];
+            }
+            $entity->ID_TRIP = $data[$i]['id_trip'];
+            $entity->NB_PERS = $data[$i]['pax'];
+            $entity->NB_ROOM = $data[$i]['count'];
+
+            if(!$this->rooms->save($entity)) $success=false;
+        }
+
         $this->setJSONResponse([
-            'success'=> true,
+            'success'=> $success,
             'row'=>  $data
         ]);
         return;

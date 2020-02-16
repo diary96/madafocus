@@ -1,3 +1,5 @@
+
+
 var RSTOCircuits = {
     xCSRFToken: null,
     table: $('#rsto-circuit-datatable'),
@@ -180,9 +182,10 @@ var RSTOTripChild = {
         id_meal: $('#rsto-circuit-day-meal-plan'),
 
         id_selected: $('#rsto-circuit-day-room-id'),
-        id_type_room: $('#rsto-circuit-day-room-list-room-type-plan'),
+        id_room: $('#rsto-circuit-day-room-list-room-type-plan'),
         id_count_room: $('#rsto-circuit-day-room-count-plan'),
         id_pax_room: $('#rsto-circuit-day-pax-plan'),
+        meal_plan: $('#rsto-circuit-meal-plan')
     },
     buttons: {
         configure: $('#rsto-circuit-day-configure-btn'),
@@ -212,7 +215,7 @@ var RSTOTripChild = {
        _me.xCSRFToken = circuits.xCSRFToken;
         _me.buttons.addRoom.click( function () {
             _me.formAddRoom.RSTOReset();
-            _me.fields.id_type_room.RSTODataURLQuery({hotel:_me.fields.id_hotel.val()});
+            _me.fields.id_room.RSTODataURLQuery({hotel:_me.fields.id_hotel.val()});
             _me.modalAddNewRoom.modal('show');
         });
         _me.buttons.editRoom.click( function() {
@@ -220,8 +223,8 @@ var RSTOTripChild = {
             var selectedData = _me.tableRoom.RSTODatatableSelectedData();
             console.log(selectedData);
             _me.fields.id_selected.val(selectedData.id);
-            _me.fields.id_type_room.RSTODataURLQuery({hotel:_me.fields.id_hotel.val()});
-            _me.fields.id_type_room.RSTOOriginalValue(selectedData.id_type, selectedData.type_name);
+            _me.fields.id_room.RSTODataURLQuery({hotel:_me.fields.id_hotel.val()});
+            _me.fields.id_room.RSTOOriginalValue(selectedData.id, selectedData.type_name);
             _me.fields.id_count_room.RSTOOriginalValue(selectedData.count);
             _me.fields.id_pax_room.RSTOOriginalValue(selectedData.pax)
             _me.modalAddNewRoom.modal('show');
@@ -250,7 +253,7 @@ var RSTOTripChild = {
         // On change carrier
         _me.fields.carrier.change( function() {
             // load Vehicule by id carrier
-            _me.fields.id_carrier_vehicle.RSTODataURLQuery({carrier: _me.fields.carrier.val()});
+            // _me.fields.id_carrier_vehicle.RSTODataURLQuery({carrier: _me.fields.carrier.val()});
 
         });
 
@@ -312,6 +315,7 @@ var RSTOTripChild = {
                     $(row).RSTOSelectableDatatableRow(_me.tableRoom, data);
                 }
             });
+            _me.fields.id_selected.val('');
         }
         _me.buttons.configure.click( function() {
             // initForm();
@@ -323,11 +327,11 @@ var RSTOTripChild = {
             if (dataSelected.id_hotel ) _me.fields.id_hotel.RSTOOriginalValue(parseInt(dataSelected.id_hotel), dataSelected.hotel);
             if(dataSelected.id_places)   _me.fields.id_places.RSTOOriginalValue(parseInt(dataSelected.id_places), dataSelected.place);
             if(dataSelected.carrier) _me.fields.carrier.RSTOOriginalValue(parseInt(dataSelected.id_carrier), dataSelected.carrier);
-            if(dataSelected.id_carrier_vehicle) _me.fields.id_carrier_vehicle.RSTOOriginalValue(parseInt(dataSelected.id_carrier_vehicle), dataSelected.vehicle_registration);
+            if(dataSelected.type_vehicule) _me.fields.id_carrier_vehicle.RSTOOriginalValue(parseInt(dataSelected.type_vehicule), dataSelected.type_vehicle_libelle);
+            if(dataSelected.id_select_option) _me.fields.meal_plan.RSTOOriginalValue(parseInt(dataSelected.id_select_option), dataSelected.meal_plan);
             // populate ALL select 2 form
             _me.fields.id_hotel.RSTODataURLQuery({place: _me.fields.id_places.val()});
             _me.fields.id_meal.RSTODataURLQuery({hotel:_me.fields.id_hotel.val()});
-            _me.fields.id_carrier_vehicle.RSTODataURLQuery({carrier: _me.fields.carrier.val()});
             // populate datable of room by id trip dep
            //  var url = _me.tableRoom.RSTODataURLReturnQuery({id_trip: dataSelected.id});
            //  console.log(_me.tableRoom);
@@ -355,45 +359,74 @@ var RSTOTripChild = {
             _me.form.RSTODataURLQuery({'id': dataSelected.id}, 'data-edit-url');
         });
         // Ajout dans un object temporaire pour le traitement necessaire
+        var findOnTemp = function(id_room){
+            console.log(id_room);
+            for(var temp of _me.dataRoomTemp) {
+                console.log(temp.id);
+                if(temp.id == id_room) {
+                    return temp
+                }
+            }
+            return null;
+        }
         _me.buttons.saveAddRoom.click( function () {
             var _selectedTrip = _me.table.RSTODatatableSelectedData();
+
+            const data = findOnTemp(_me.fields.id_room.val());
             console.log(_me.fields.id_selected.val());
             if(_me.fields.id_selected.val()!=="") {
                 var index = 0;
                 const length = _me.dataRoomTemp.length;
                 for (var i=0;i<length;i++) {
                     const row = _me.dataRoomTemp[i];
+                    console.log(row.id);
                     if (row.id == _me.fields.id_selected.val()) {
-                        row.id_type = _me.fields.id_type_room.val();
-                        row.type_name =_me.fields.id_type_room[0].innerText;
-                        row.count = _me.fields.id_count_room.val();
-                        row.pax = _me.fields.id_pax_room.val();
+                        row.id = _me.fields.id_room.val();
+                        row.type_name =_me.fields.id_room[0].innerText;
+                        row.count = parseInt(_me.fields.id_count_room.val());
+                        row.pax = parseInt(_me.fields.id_pax_room.val());
+
                         loadData();
                         _me.modalAddNewRoom.modal('hide');
+                        _me.formAddRoom.RSTOReset();
                         return;
                     }
                 }
+            } else{
+                console.log(data);
+                if (data) {
+                    data.id = _me.fields.id_room.val();
+                    data.type_name = _me.fields.id_room[0].innerText;
+                    data.count += parseInt(_me.fields.id_count_room.val());
+                    data.pax += parseInt(_me.fields.id_pax_room.val());
+                    loadData();
+                    _me.modalAddNewRoom.modal('hide');
+                    _me.formAddRoom.RSTOReset();
+                    return;
+                }
+                // recuperation des valeurs dans fields
+                var id_room = _me.fields.id_room.val();
+                var type_libelle = _me.fields.id_room[0].innerText;
+                var count =parseInt( _me.fields.id_count_room.val());
+                var pax = parseInt(_me.fields.id_pax_room.val());
+                // Mettre les données dans un objet de la meme structure que dataset
+                var objectTemp = {
+                    id_trip: _selectedTrip.id,
+                    count: count,
+                    pax: pax,
+                    id: id_room,
+                    type_name: type_libelle,
+                    id_hotel: _selectedTrip.id_hotel
+                }
+                // Ajout de l'objet dans dataset
+                _me.dataRoomTemp.push(objectTemp);
+                // reloader le datatable tempo
+                _me.modalAddNewRoom.modal('hide');
+                loadData();
+                // reinit le form controle
+                _me.formAddRoom.RSTOReset();
             }
-            // recuperation des valeurs dans fields
-            var id_type = _me.fields.id_type_room.val();
-            var type_libelle = _me.fields.id_type_room[0].innerText;
-            var count = _me.fields.id_count_room.val()
-            var pax = _me.fields.id_pax_room.val();
-            // Mettre les données dans un objet de la meme structure que dataset
-            var objectTemp = {
-                id_trip: _selectedTrip.id,
-                count: count,
-                pax: pax,
-                id_type: id_type,
-                type_name: type_libelle,
-                id_hotel: _selectedTrip.id_hotel
-            }
-            // Ajout de l'objet dans dataset
-            _me.dataRoomTemp.push(objectTemp);
-            // reloader le datatable tempo
-            loadData();
-            // reinit le form controle
-            _me.formAddRoom.RSTOReset();
+
         });
         // supprimer une ligne du datable tempo sans affecter la base de donnée
         _me.buttons.deleteRoon.click( function() {
@@ -416,10 +449,11 @@ var RSTOTripChild = {
             }
         });
         _me.form.on('submit', function(e) {
+            var _selectedTrip = _me.table.RSTODatatableSelectedData();
             const url = _me.form.attr('data-room-url');
             console.log(_me.dataRoomTemp);
             $.ajax({
-                url: url,
+                url: url + '?' + $.param({ id_trip: _selectedTrip.id }),
                 type: 'post',
                 dataType: 'json',
                 data: JSON.stringify(_me.dataRoomTemp),
