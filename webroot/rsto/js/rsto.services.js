@@ -18,6 +18,7 @@ const RSTOService = {
         edit: $('#rsto-service-edit-btn'),
         prices: $('#rsto-service-prices-btn'),
         providers: $('#rsto-service-providers-btn'),
+        reliance: $('#rsto-service-dependencies-btn'),
         delete: $('#rsto-service-delete-btn')
     },
     init: function(){
@@ -63,6 +64,7 @@ const RSTOService = {
             // Enable buttons
             _me.buttons.edit.RSTOEnable();
             _me.buttons.delete.RSTOEnable();
+            _me.buttons.reliance.RSTOEnable();
             if(data.from_provider === 1){
                 _me.buttons.providers.RSTOEnable();
                 _me.buttons.prices.RSTODisable();
@@ -77,6 +79,13 @@ const RSTOService = {
                 _choice.fields.provider.RSTODataURLQuery({'service': data.id});
             }
             
+            if(RSTOServiceReliance){
+                var _dependencies = RSTOServiceReliance;
+                _dependencies.table.RSTODataURLQuery({'id_service': data.id});
+                _dependencies.fields.dependency.RSTODataURLQuery({'id_service': data.id});
+                _dependencies.fields.dependent.val(data.id);
+            }
+            
             // Update data-edit-url
             _me.form.RSTODataURLQuery({'id_service': data.id}, 'data-edit-url');
         });
@@ -87,6 +96,7 @@ const RSTOService = {
             _me.buttons.delete.RSTODisable();
             _me.buttons.prices.RSTODisable();
             _me.buttons.providers.RSTODisable();
+            _me.buttons.reliance.RSTODisable();
         });
         
         // Edit service
@@ -122,6 +132,7 @@ const RSTOService = {
                 } 
             });
         });
+        
     }
 };
 //</editor-fold>
@@ -510,10 +521,97 @@ const RSTOServiceProviderSellingPrices = {
 
 
 // </editor-fold>
+// <editor-fold desc="Service reliance" defaultstate="collapsed">
+const RSTOServiceReliance = {
+    xCSRFToken: null,
+    table: $('#rsto-service-dependencies-datatable'),
+    datatable: null,
+    listModal: $('#rsto-service-provider-dependencies-list-modal'),
+    modal: $('#rsto-service-dependency-modal'),
+    form: $('#rsto-service-dependency-form'),
+    fields: {
+        dependent: $('#rsto-service-dependency-dependent'),
+        dependency: $('#rsto-service-dependency-denpendency'),
+        ratio: $('#rsto-service-dependency-ratio')
+    },
+    buttons: {
+        add: $('#rsto-service-dependency-add-btn'),
+        edit: $('#rsto-service-dependency-edit-btn'),
+        delete: $('#rsto-service-dependency-delete-btn')
+    },
+    init: function(){
+        var _me = RSTOServiceReliance;
+        _me.xCSRFToken = _me.form.attr('data-x-csrf-token');
+        
+        _me.datatable = _me.table.RSTODatatable([
+            {'data': 'type_name'},
+            {'data': 'description'},
+            {'data': 'ratio'}
+        ]);
+        
+        RSTOService.buttons.reliance.click(function(){
+            _me.datatable.ajax.url(_me.table.attr('data-url')).load();
+            _me.listModal.modal('show');
+        });
+        
+        // Add dependency
+        _me.buttons.add.click(function(){
+            _me.modal.modal('show');
+        });
+        
+        _me.table.on('selectionChanged.rsto',function(e, data){
+            _me.buttons.edit.RSTOEnable();
+            _me.buttons.delete.RSTOEnable();
+            _me.form.RSTODataURLQuery({'id_service_dependency': data.id}, 'data-edit-url');
+        });
+        
+        _me.table.on('draw.dt', function(){
+            _me.buttons.edit.RSTODisable();
+            _me.buttons.delete.RSTODisable();
+        });
+        
+        // When form is submitted
+        _me.form.on('submitted.rsto', function(e, response){
+            var _editMode = _me.form.attr('data-edit') === 'true';
+            _me.modal.modal('hide');
+            _me.datatable.ajax.reload();
+            alert(_editMode ? RSTOMessages.Updated : RSTOMessages.Added);
+        });
+        
+        // Update dependency
+        _me.buttons.edit.click(function(){
+            _me.form.attr('data-edit', 'true');
+            var _data = _me.table.RSTODatatableSelectedData();
+            
+            _me.fields.dependency.RSTOOriginalValue(_data.id_dependency, _data.dependency);
+            _me.fields.ratio.RSTOOriginalValue(_data.ratio);
+            
+            _me.modal.modal('show');
+        });
+        
+        // Deleting price
+        _me.buttons.delete.click(function(){
+            confirm('Do your really want to delete this item ?', function(response){
+                if(response === true){
+                    RSTOGetJSON(_me.buttons.delete.attr('data-url'), {'id_service_dependency': _me.table.RSTODatatableSelectedData().id}, _me.xCSRFToken, function(response){
+                        if(response === true || response === 1){
+                            _me.datatable.ajax.reload();
+                            alert(RSTOMessages.Deleted);
+                        } else {
+                            alert(RSTOMessages.Error);
+                        }
+                    });
+                } 
+            });
+        });
+    }
+};
+// </editor-fold>
 $(window).on('load', function(){
     RSTOService.init();
     RSTOServiceSellingPrice.init();
     RSTOServiceProvider.init();
     RSTOServiceProviderChoice.init();
     RSTOServiceProviderSellingPrices.init();
+    RSTOServiceReliance.init();
 });

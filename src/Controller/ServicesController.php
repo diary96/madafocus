@@ -16,6 +16,7 @@ final class ServicesController extends AppController{
         'addProvider' => '10.2',
         'addProviderSellingPrice' => '10.3',
         'addSellingPrice' => '10.3',
+        'addServiceDependency' => '10.2',
         'chooseProvider' => '10.2',
         'costPriceDatatable' => '10.3',
         'currencySelect2' => '10.2',
@@ -23,6 +24,7 @@ final class ServicesController extends AppController{
         'deleteProvider' => '10.2',
         'deleteProviderSellingPrice' => '10.3',
         'deleteSellingPrice' => '10.3',
+        'deleteServiceDependency' => '10.2',
         'index' => '10.1',
         'datatable' => '10.1',
         'placeSelect2' => '10.2',
@@ -31,12 +33,15 @@ final class ServicesController extends AppController{
         'providerSellingPriceDatatable' => '10.3',
         'providerSellingPriceCurrencySelect2' => '10.3',
         'sellingPriceDatatable' => '10.1',
+        'serviceDependenciesDatatable' => '10.2',
+        'serviceDependenciesSelect2' => '10.2',
         'titleSelect2' => '10.2',
         'typeSelect2' => '10.2',
         'update' => '10.2',
         'updateProvider' => '10.2',
         'updateProviderSellingPrice' => '10.3',
-        'updateSellingPrice' => '10.3'
+        'updateSellingPrice' => '10.3',
+        'updateServiceDependency' => '10.2'
     ];
     
     /**
@@ -107,6 +112,21 @@ final class ServicesController extends AppController{
             $this->setJSONResponse([
                 'success' => $this->sellingPrices->save($_price) !== null,
                 'row' => $_price
+            ]);
+        } else {
+            $this->raise404();
+        }
+    }
+    
+    public function addServiceDependency(){
+        $this->jsonOnly();
+        $_table = TableRegistry::getTableLocator()->get('ServiceDependencies');
+        $_dependency = $_table->newEntity($this->request->getData());
+        $_dependency->ratio = $this->RSTO->RemoveThousandSeparator($_dependency->ratio);
+        if(is_object($_dependency)){
+            $this->setJSONResponse([
+                'success' => $_table->save($_dependency) !== null,
+                'row' => $_dependency
             ]);
         } else {
             $this->raise404();
@@ -198,6 +218,17 @@ final class ServicesController extends AppController{
         }
     }
     
+    public function deleteServiceDependency(){
+        $this->jsonOnly();
+        $_table = TableRegistry::getTableLocator()->get('ServiceDependencies');
+        $_dependency = $_table->get($this->request->getData('id_service_dependency'));
+        if(is_object($_dependency)){
+            $this->setJSONResponse($_table->delete($_dependency));
+        } else {
+            $this->raise404();
+        }
+    }
+    
     public function index(){
         $this->set('rsto_service_datatable_url', Router::url('/services/datatable'));
         $this->set('rsto_service_add_url', Router::url('/services/add'));
@@ -224,6 +255,12 @@ final class ServicesController extends AppController{
         $this->set('rsto_service_provider_selling_add_url', Router::url('/services/add_provider_selling_price'));
         $this->set('rsto_service_provider_selling_update_url', Router::url('/services/update_provider_selling_price'));
         $this->set('rsto_service_provider_selling_delete_url', Router::url('/services/delete_provider_selling_price'));
+        // Dependencies
+        $this->set('rsto_service_dependencies_datatable_url', Router::url('/services/service_dependencies_datatable'));
+        $this->set('rsto_service_dependencies_select2_url', Router::url('/services/service_dependencies_select2'));
+        $this->set('rsto_service_dependency_add_url', Router::url('/services/add_service_dependency'));
+        $this->set('rsto_service_dependency_edit_url', Router::url('/services/update_service_dependency'));
+        $this->set('rsto_service_dependency_delete_url', Router::url('/services/delete_service_dependency'));
     }
     
     public function initialize() {
@@ -330,6 +367,22 @@ final class ServicesController extends AppController{
         $this->setJSONResponse($this->loadComponent('Datatable', $_params)->get());
     }
     
+    public function providerSellingPriceCurrencySelect2(){
+        $this->jsonOnly();
+        // Exclude existing providers 
+        $_exclude = TableRegistry::getTableLocator()->get('ProviderSellingPrices')->find();
+        $_exclude->where(['service_provider' => $this->request->getQuery('service_provider')]);
+        $_exclude = $_exclude->select(['currency'])->extract('currency')->toArray();
+        $_exp = new QueryExpression();
+        $_params['filters'] = ['id_select' => Component\RSTOComponent::CURRENCIES_ID_SELECT];
+        if (count($_exclude) > 0) {
+            array_push($_params['filters'], $_exp->notIn('id', $_exclude));
+        }
+        $_params['table'] = TableRegistry::getTableLocator()->get('ViewSelectOptions');
+        $_params['column'] = 'option';
+        $this->setJSONResponse($this->loadComponent('Select2', $_params)->get());
+    }
+    
     public function sellingPriceDatatable(){
         $this->jsonOnly();
         $_params = $this->request->getData();
@@ -357,19 +410,61 @@ final class ServicesController extends AppController{
         $this->setJSONResponse($this->loadComponent('Datatable', $_params)->get());
     }
     
-    public function providerSellingPriceCurrencySelect2(){
+    public function serviceDependenciesDatatable(){
         $this->jsonOnly();
-        // Exclude existing providers 
-        $_exclude = TableRegistry::getTableLocator()->get('ProviderSellingPrices')->find();
-        $_exclude->where(['service_provider' => $this->request->getQuery('service_provider')]);
-        $_exclude = $_exclude->select(['currency'])->extract('currency')->toArray();
-        $_exp = new QueryExpression();
-        $_params['filters'] = ['id_select' => Component\RSTOComponent::CURRENCIES_ID_SELECT];
-        if (count($_exclude) > 0) {
-            array_push($_params['filters'], $_exp->notIn('id', $_exclude));
+        $_columnModel = [
+            'name' => '',
+            'data' => '',
+            'searchable' => false,
+            'search' => [
+                'value' => '',
+                'regex' => ''
+            ]
+        ];
+        
+        $_params = $this->request->getData();
+        $_params['table'] = TableRegistry::getTableLocator()->get('ViewServiceDependencies');
+        foreach([['data' => 'id_dependency'], ['data' => 'dependency']] as $_column){
+            array_push($_params['columns'], array_merge($_columnModel, $_column));
+            
         }
-        $_params['table'] = TableRegistry::getTableLocator()->get('ViewSelectOptions');
-        $_params['column'] = 'option';
+        $_params['filters'] = [['id_dependent' => $this->request->getQuery('id_service')]];
+        $_params['callback'] = function (&$_depencdencies){
+            foreach($_depencdencies as $_dependency){
+                $_dependency->ratio = $this->RSTO->FormatNumber($_dependency->ratio);
+            }
+            return $_depencdencies;
+        };
+        $this->setJSONResponse($this->loadComponent('Datatable', $_params)->get());
+    }
+    
+    public function serviceDependenciesSelect2(){
+        $this->jsonOnly();
+        $_id_service = $this->request->getQuery('id_service');
+        $_service = $this->services->get($_id_service);
+        $_params = $this->request->getData();
+        $_params['table'] = TableRegistry::getTableLocator()->get('ViewServices');
+        
+        // Construct exclusion list
+        $_table = TableRegistry::getTableLocator()->get('ViewServiceDependencies');
+        $_exclude = $_table->find();
+        $_exclude->where(['id_dependent' => $_id_service]);
+        $_exclude = $_exclude->select(['id_dependency'])->extract('id_dependency')->toArray();
+        $_query = new QueryExpression();
+        
+        $_params['column'] = 'type_name';
+        $_params['filters'] = [
+            // Filter by place, only service from the same place could be a dependency
+            'id_place' => $_service->place,
+            // Service cannnot depend on himself
+            $_query->notEq('id', $_id_service)
+        ];
+        
+        if(count($_exclude) > 0){
+            // Exclude existing dependency
+            array_push($_params['filters'], $_query->notIn('id', $_exclude));
+        }
+        
         $this->setJSONResponse($this->loadComponent('Select2', $_params)->get());
     }
     
@@ -436,6 +531,22 @@ final class ServicesController extends AppController{
             $this->setJSONResponse([
                 'success' => $this->sellingPrices->save($_price) !== null,
                 'row' => $_price
+            ]);
+        } else {
+            $this->raise404();
+        }
+    }
+    
+    public function updateServiceDependency(){
+        $this->jsonOnly();
+        $_table = TableRegistry::getTableLocator()->get('ServiceDependencies');
+        $_dependency = $_table->get($this->request->getQuery('id_service_dependency'));
+        if(is_object($_dependency)){
+            $_dependency->dependency = $this->request->getData('dependency');
+            $_dependency->ratio = $this->RSTO->FormatNumber($this->request->getData('ratio'));
+            $this->setJSONResponse([
+                'success' => $_table->save($_dependency) !== null,
+                'row' => $_dependency
             ]);
         } else {
             $this->raise404();

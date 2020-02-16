@@ -305,3 +305,67 @@
     </div>
 <?php endif ?>
 <?php $this->end() ?>
+<?php $this->start('rsto_service_dependency_list_modal') ?>
+<div class="modal fade" id="rsto-service-provider-dependencies-list-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span></button>
+                <h4 class="modal-title">Dependencies</h4>
+            </div>
+            <div class="modal-body">
+                <table id="rsto-service-dependencies-datatable" width="100%" class="table table-bordered table-hover table-responsive" data-url="<?= $rsto_service_dependencies_datatable_url ?>" data-x-csrf-token="<?= $x_csrf_token ?>">
+                    <thead>
+                        <tr>
+                            <th><?= __('Service') ?></th>
+                            <th><?= __('Description') ?></th>
+                            <th><?= __('Ratio') ?></th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <?php if(CAN_10_2) : ?>
+                <button type="button" class="btn btn-primary pull-left" id="rsto-service-dependency-add-btn"><i class="fa fa-plus"></i>&nbsp;<?= __('Add') ?></button>
+                <button type="button" class="btn btn-default pull-left disabled" disabled id="rsto-service-dependency-edit-btn"><i class="fa fa-edit"></i>&nbsp;<?= __('Edit') ?></button>
+                <button type="button" class="btn btn-default pull-left disabled" disabled id="rsto-service-dependency-delete-btn" data-url="<?= $rsto_service_dependency_delete_url ?>"><i class="fa fa-trash"></i>&nbsp;<?= __('Delete') ?></button>
+                <?php endif; ?>
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="rsto-service-denpendency-list-close-btn"><?= __('Close') ?></button>
+            </div>
+        </div>
+    </div>
+</div>
+<?php $this->end() ?>
+<?php $this->start('rsto_service_dependency_modal') ?>
+<?php if (CAN_10_2) : ?>
+    <div class="modal fade rsto-modal" id="rsto-service-dependency-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title"><?= __("Dependency") ?></h4>
+                </div>
+                <form id="rsto-service-dependency-form" name="rsto-service-dependency" class="rsto-form" role="form" data-x-csrf-token="<?= $x_csrf_token ?>" data-action-url="<?= $rsto_service_dependency_add_url ?>" data-edit-url="<?= $rsto_service_dependency_edit_url ?>">
+                    <input type="hidden" name="dependent" id="rsto-service-dependency-dependent">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="rsto-service-dependency-denpendency"><?= __('Dependency') ?></label>
+                            <select name="dependency" class="form-control rsto-select2" data-required="true" id="rsto-service-dependency-denpendency" data-url="<?= $rsto_service_dependencies_select2_url ?>" data-placeholder="<?= __("Choose a dependency") ?>"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="rsto-service-dependency-ratio"><?= __('Ratio') ?></label>
+                            <input name="ratio" type="text" class="form-control numeric-validation" data-required="true" id="rsto-service-dependency-ratio" placeholder="<?= __("Enter the ratio") ?>">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal"><?= __('Cancel') ?></button>
+                        <button type="submit" class="btn btn-primary disabled" id="rsto-service-dependency-form-submit-btn"><?= __('Save') ?>&nbsp;</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+<?php endif ?>
+<?php $this->end() ?>

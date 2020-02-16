@@ -29,7 +29,7 @@ $this->Html->script('/rsto/js/rsto.services', ['block' => true]);
                     <i class="fa fa-user-circle-o"></i> <?= __('Providers') ?>
                 </button>
                 <button class="btn btn-app disabled" id="rsto-service-dependencies-btn" disabled>
-                    <i class="fa fa-chain"></i> <?= __('Reliances') ?>
+                    <i class="fa fa-chain"></i> <?= __('Reliance') ?>
                 </button>
                 <button class="btn btn-app disabled" id="rsto-service-delete-btn" data-url="<?= $rsto_service_delete_url ?>" disabled>
                     <i class="fa fa-trash"></i> <?= __('Delete') ?>
@@ -116,3 +116,5 @@ $this->Html->script('/rsto/js/rsto.services', ['block' => true]);
 <?= $this->fetch('rsto_service_provider_choice_modal') ?>
 <?= $this->fetch('rsto_service_provider_price_list_modal') ?>
 <?= $this->fetch('rsto_service_provider_price_modal') ?>
+<?= $this->fetch('rsto_service_dependency_list_modal') ?>
+<?= $this->fetch('rsto_service_dependency_modal') ?>
