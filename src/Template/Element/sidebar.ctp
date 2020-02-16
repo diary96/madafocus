@@ -17,7 +17,7 @@ $this->start('rsto_sidebar_user_panel')
 ?>
 <div class="user-panel">
     <div class="pull-left image">
-        <?= 
+        <?=
             $this->Html->image('user-160x160.jpg', [
                 'alt' => 'User image',
                 'class' => 'img-circle'
@@ -94,7 +94,7 @@ $this->start('rsto_sidebar_main_menu');
     </li>
     <?php endif; ?>
     <li>
-        <a href="#">
+        <a href="<?= $rsto_sidebar_urls['booking'] ?>">
             <i class="fa fa-calendar-plus-o"></i> <span><?= __('Booking') ?></span>
         </a>
     </li>
@@ -129,7 +129,7 @@ $this->start('rsto_sidebar_main_menu');
 </ul>
 <?php $this->end(); ?>
 
-<?php 
+<?php
 /**
  * Ce block constitue le sidebar gauche
  */

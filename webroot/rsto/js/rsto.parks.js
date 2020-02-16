@@ -14,7 +14,8 @@ const RSTOPark = {
         add: $('#rsto-park-add-btn'),
         edit: $('#rsto-hotel-edit-btn'),
         delete: $('#rsto-park-delete-btn'),
-        prices: $('#rsto-park-selling-entrance-fees-btn')
+        prices: $('#rsto-park-selling-entrance-fees-btn'),
+        guidance: $('#rsto-park-guidance-btn')
     },
     entranceFee : {
         table: $('#rsto-park-selling-entrance-fee-datatable'),
@@ -44,6 +45,7 @@ const RSTOPark = {
             _me.buttons.edit.RSTOEnable();
             _me.buttons.delete.RSTOEnable();
             _me.buttons.prices.RSTOEnable();
+            _me.buttons.guidance.RSTOEnable();
 
             // Update data-edit-url
             _me.form.RSTODataURLQuery({'id_park': data.id}, 'data-edit-url');
@@ -57,6 +59,7 @@ const RSTOPark = {
             _me.buttons.edit.RSTODisable();
             _me.buttons.delete.RSTODisable();
             _me.buttons.prices.RSTODisable();
+            _me.buttons.guidance.RSTODisable();
         });
 
         // When modal is shown
