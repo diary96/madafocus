@@ -217,27 +217,7 @@ var RSTOTripChild = {
             _me.fields.id_type_room.RSTODataURLQuery({hotel:_me.fields.id_hotel.val()});
             _me.modalAddNewRoom.modal('show');
         });
-        _me.table.on('selectionChanged.rsto', function (e, data) {
-            var _data = _me.table.RSTODatatableSelectedData();
-            if(_data.ID_STATUS == 1){
-                _me.buttons.validation.RSTOEnable();
-            }
-            else{
-                _me.buttons.validation.RSTODisable();
-            }
 
-            // Enable buttons
-            _me.buttons.edit.RSTOEnable();
-            _me.buttons.delete.RSTOEnable();
-
-            _me.buttons.infos.RSTOEnable();
-            _me.buttons.configure.RSTOEnable();
-            _me.buttons.quote.RSTOEnable();
-
-
-            // Update data-edit-url
-            _me.form.RSTODataURLQuery({'id': data.id}, 'data-edit-url');
-        });
        // On change place
         _me.fields.id_places.change(function(){
             // load hotel by id_place
