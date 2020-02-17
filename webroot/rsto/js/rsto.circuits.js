@@ -210,11 +210,17 @@ var RSTOTripChild = {
         addSpecify: $('#rsto-circuit-day-specify-add-btn'),
         editRoom: $('#rsto-circuit-edit-room'),
         editSpicify: $('#rsto-circuit-specify-edit-btn'),
-        deleteRoon: $('#rsto-circuit-delect-room'),
+        deleteRoon: $('#rsto-circuit-delete-room'),
         deleteSpecify: $('#rsto-circuit-specify-delete-btn'),
         saveAddRoom: $('#rsto-circuit-day-room-form-submit-btn'),
         saveAddSpecify: $('#rsto-circuit-service-form-submit-btn'),
         always_drive: $('#rsto-circuit-always-drive-form-submit-btn'),
+
+        editTableRoom: $('#rsto-circuit-edit-room'),
+
+        editTableSpecify: $('#rsto-circuit-specify-edit-btn'),
+
+        saveFormBtn: $('#rsto-service-form-submit-btn'),
     },
     dataRoomTemp: null,
     dataSpecifyTemp: null,
@@ -350,6 +356,8 @@ var RSTOTripChild = {
         // reloader datatable temporaire Table Room
         var loadData = function() {
             _me.tableRoom.DataTable().clear().destroy();
+            _me.buttons.deleteRoon.RSTODisable();
+            _me.buttons.editTableRoom.RSTODisable();
             var dataSet = _me.dataRoomTemp;
             _me.tableRoom.DataTable({
                 data: dataSet,
@@ -368,6 +376,8 @@ var RSTOTripChild = {
         var loadDataSpecify = function() {
             _me.tableSpecify.DataTable().clear().destroy();
             _me.tableSpecify.RSTODatableResetSelectedData();
+            _me.buttons.deleteSpecify.RSTODisable();
+            _me.buttons.editTableSpecify.RSTODisable();
             var dataSet = _me.dataSpecifyTemp;
             console.log(_me.tableSpecify.RSTODatatableSelectedData());
             _me.tableSpecify.DataTable({
@@ -448,6 +458,7 @@ var RSTOTripChild = {
         }
         // Event on click, permet de sauvegarder temporairement ROOM
         _me.buttons.saveAddRoom.click( function () {
+            _me.form.RSTOIsValid = true;
             var _selectedTrip = _me.table.RSTODatatableSelectedData();
 
             const data = findOnTemp(_me.fields.id_room.val());
@@ -516,6 +527,7 @@ var RSTOTripChild = {
         }
         // Event on click, permet de sauvegarder temporairement SPECiFY
         _me.buttons.saveAddSpecify.click( function () {
+            _me.form.RSTOIsValid = true;
             var _selectedTrip = _me.table.RSTODatatableSelectedData();
             const dataSelect = _me.tableSpecify.RSTODatatableSelectedData();
             console.log(dataSelect);
@@ -547,6 +559,7 @@ var RSTOTripChild = {
         });
         // supprimer une ligne du datable tempo sans affecter la base de donnée
         _me.buttons.deleteRoon.click( function() {
+            _me.form.RSTOIsValid = true;
             var selectedElement = _me.tableRoom.RSTODatatableSelectedData();
             if(_me.dataRoomTemp){
                 _me.dataRoomTemp.splice(_me.dataRoomTemp.indexOf(selectedElement),1);
@@ -556,11 +569,26 @@ var RSTOTripChild = {
         });
         // supprimer une ligne du datable tempo specify sans affecter la base de donnée
         _me.buttons.deleteSpecify.click( function() {
+            _me.form.RSTOIsValid = true;
             var selectedElement = _me.tableSpecify.RSTODatatableSelectedData();
             if(_me.dataSpecifyTemp){
                 _me.dataSpecifyTemp.splice(_me.dataSpecifyTemp.indexOf(selectedElement),1);
                 loadDataSpecify();
             }
+        });
+        // On datatable selection changed
+        _me.tableRoom.on('selectionChanged.rsto', function (e, data) {
+            // Enable buttons
+            _me.buttons.deleteRoon.RSTOEnable();
+            _me.buttons.editTableRoom.RSTOEnable();
+
+        });
+        // On datatable selection changed
+        _me.tableSpecify.on('selectionChanged.rsto', function (e, data) {
+            // Enable buttons
+            _me.buttons.deleteSpecify.RSTOEnable();
+            _me.buttons.editTableSpecify.RSTOEnable();
+
         });
         // Event on submitted, permet de dectecter et traiter la sauvegarde
         _me.form.on('submitted.rsto', function (e, response) {
@@ -576,6 +604,7 @@ var RSTOTripChild = {
         // Event on submit, permet de sauvegarder les donnees room dans la base de donnee
         _me.form.on('submit', function(e) {
             var _selectedTrip = _me.table.RSTODatatableSelectedData();
+            console.log(_selectedTrip);
             const url = _me.form.attr('data-room-url');
             $.ajax({
                 url: url + '?' + $.param({ id_trip: _selectedTrip.id }),
@@ -597,13 +626,10 @@ var RSTOTripChild = {
 
             //--------------attribution place to next day
             if(_me.fields.id_places.val()!= null){
-                var url1 = "/circuitdaily/nextplace?id=" + circuits.table.RSTODatatableSelectedData().id;
-                var _data = _me.table.RSTODatatableSelectedData();
-
+                var url1 = _me.form.attr('data-next-url') + "?id=" + _selectedTrip.id;
                 $.ajax({
-                    url : url1,
+                    url : url1 + '&place=' + _me.fields.id_places.val() + '&day=' + _selectedTrip.day,
                     type : 'POST',
-                    data : 'place=' + _me.fields.id_places.val() + '&day=' + _data.day,
                     headers: {
                         'x-csrf-token': _me.xCSRFToken
                     },
