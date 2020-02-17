@@ -14,20 +14,28 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                         <select name="tour_operator" class="form-control" data-required="false" id="rsto-circuit-tour-operator" data-url="<?= $rsto_circuits_select2_data_url ?>" data-placeholder="<?= __("Choose a tour operator") ?>"></select>
                     </div>
                     <div class="form-group">
+                        <label for="rsto-circuit-num-vol"><?= __('Num. vol') ?></label>
+                        <input name="num_vol" type="text" class="form-control" data-required="true" id="rsto-circuit-num-vol" placeholder="<?= __("Num. vol") ?>">
+                    </div>
+                    <div class="form-group">
                         <label for="rsto-circuit-start"><?= __('Start') ?></label>
-                        <input name="start" type="date" class="form-control date-validation" data-required="true" id="rsto-circuit-start" placeholder="<?= __("Pick the start date") ?>">
+                        <input name="start" type="date" class="form-control date-validation" data-required="true" id="rsto-circuit-start" placeholder="<?= __("Pick the start date") ?>" value="<?= date("Y-m-d")?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="rsto-circuit-time"><?= __('Arriving time') ?></label>
+                        <input name="arriving_time" type="time" class="form-control date-validation" data-required="true" id="rsto-circuit-time" placeholder="<?= __("time") ?>">
                     </div>
                     <div class="form-group">
                         <label for="rsto-circuit-length"><?= __('Stay length') ?></label>
-                        <input name="duration" type="text" class="form-control numeric-validation" data-required="true" id="rsto-circuit-length" placeholder="<?= __("length") ?>" value="10">
+                        <input name="duration" type="text" class="form-control numeric-validation" data-required="true" id="rsto-circuit-length" placeholder="<?= __("length") ?>">
                     </div>
                     <div class="form-group">
                         <label for="rsto-circuit-pax"><?= __('Adult count') ?></label>
-                        <input name="adults" type="text" class="form-control numeric-validation" data-required="true" id="rsto-circuit-adult" placeholder="<?= __("Pax") ?>" value="15">
+                        <input name="adults" type="text" class="form-control numeric-validation" data-required="true" id="rsto-circuit-adult" placeholder="<?= __("Pax") ?>">
                     </div>
                     <div class="form-group">
                         <label for="rsto-circuit-pax"><?= __('Children count') ?></label>
-                        <input name="childrens" type="text" class="form-control numeric-validation" data-required="true" id="rsto-circuit-child" placeholder="<?= __("Pax") ?>" value="15">
+                        <input name="childrens" type="text" class="form-control numeric-validation" data-required="true" id="rsto-circuit-child" placeholder="<?= __("Pax") ?>">
                     </div>
                     <div class="form-group">
                         <label for="rsto-circuit-driving-mode"><?= __('Driving mode') ?></label>
@@ -91,7 +99,7 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                     <span aria-hidden="true">×</span></button>
                 <h4 class="modal-title"></h4>
             </div>
-            <form id="rsto-service-form" name="rsto-circuit-day-form" class="rsto-form" role="form" data-x-csrf-token="<?= $x_csrf_token ?>" data-action-url="" data-edit-url="">
+            <form id="rsto-trip-det-form" name="rsto-circuit-day-form" class="rsto-form" role="form" data-x-csrf-token="<?= $x_csrf_token ?>" data-action-url="" data-edit-url="<?= $rsto_circuit_trip_det_edit_url ?>" data-room-url="<?= $rsto_circuit_edit_room_hotel?>">
                 <div class="modal-body" style="background-color: #f0f0f0">
                     <div class="box">
                         <div class="box-header with-border">
@@ -99,7 +107,7 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                         </div>
                         <div class="box-body">
                             <div class="form-group">
-                                <select name="hotel" class="form-control rsto-select" data-required="true" id="rsto-circuit-place" data-url="<?= $rsto_circuits_places_select ?>" data-placeholder="Choose a place"></select>
+                                <select name="id_places" class="form-control rsto-select2" data-required="true" id="rsto-circuit-place" data-url="<?= $rsto_circuits_places_select ?>" data-placeholder="Choose a place"></select>
                             </div>
                         </div>
                     </div>
@@ -110,7 +118,7 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                           <div class="box-body">
                             <div class="form-group">
                               <label for="rsto-circuit-day-driver"><?= __('Carrier') ?></label>
-                              <select name="carrier" class="form-control" data-required="true" id="rsto-circuit-day-driver" data-url="<?= $rsto_circuits_carrier_select ?>" data-placeholder="<?= __("Choose a carrier") ?>">
+                              <select name="carrier" class="form-control rsto-select2" data-required="true" id="rsto-circuit-day-driver" data-url="<?= $rsto_circuits_carrier_select ?>" data-placeholder="<?= __("Choose a carrier") ?>">
 
                               </select>
                             </div>
@@ -124,12 +132,12 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                             </div-->
                             <div class="form-group">
                               <label for="rsto-circuit-day-driver"><?= __('Vehicle') ?></label>
-                              <select class="form-control" data-required="true" id="rsto-circuit-day-type-vehicule" data-url="<?= $rsto_circuits_vehicle_type_select ?>" data-placeholder="<?= __("Choose a driver") ?>">
+                              <select name="id_carrier_vehicle" class="form-control rsto-select2" data-required="true" id="rsto_circuits_vehicle_select" data-url="<?= $rsto_circuits_vehicle_type_select ?>" data-placeholder="<?= __("Choose a car") ?>">
                               </select>
                             </div>
                         </div>
                         <div class="box-footer">
-                            <button type="button" class="btn btn-primary pull-right"><i class="fa fa-copy"></i> <?= __('Always use these informations') ?></button>
+                            <button type="button" class="btn btn-primary pull-right" id="rsto-circuit-always-drive-form-submit-btn" data-url="<?= $rsto_circuit_always_use_url ?>" ><i class="fa fa-copy"></i> <?= __('Always use these informations') ?></button>
                         </div>
                     </div>
                     <div class="box">
@@ -139,16 +147,16 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                         <div class="box-body">
                             <div class="form-group">
                                 <label for="rsto-circuit-day-hotel"><?= __('Hotel') ?></label>
-                                <select name="hotel" class="form-control rsto-select" data-required="true" id="rsto-circuit-day-hotel" data-url="<?= $rsto_circuits_hotel_select ?>" data-placeholder="Choose an hotel"></select>
+                                <select name="hotel" class="form-control rsto-select2" data-required="true" id="rsto-circuit-day-hotel" data-url="<?= $rsto_circuits_hotel_select ?>" data-placeholder="Choose an hotel"></select>
                             </div>
                             <div class="form-group">
                                 <label for="rsto-circuit-day-meal-plan"><?= __('Meal plan') ?></label>
-                                <select name="meal_plan" class="form-control" data-required="true" id="rsto-circuit-day-meal-plan" data-url="<?= $rsto_circuits_meal_select ?>" data-placeholder="<?= __("Choose a meal plan") ?>">
+                                <select name="id_select_option" class="form-control rsto-select2" data-required="true" id="rsto-circuit-day-meal-plan" data-url="<?= $rsto_circuits_meal_select ?>" data-placeholder="<?= __("Choose a meal plan") ?>">
                                 </select>
                             </div>
                             <div class="form-group">
                                 <label><?= __('Room list') ?></label>
-                                <table id="rsto-circuit-day-hotel-rooms-datatatable" width="100%" class="table table-bordered table-hover table-responsive">
+                                <table id="rsto-circuit-day-hotel-rooms-datatatable" width="100%" class="table table-bordered table-hover table-responsive" data-url="<?= $rsto_circuit_room_hotel_datatable_url ?>" data-x-csrf-token="<?= $x_csrf_token ?>">
                                     <thead>
                                         <tr>
                                             <th><?= __('Room') ?></th>
@@ -156,24 +164,12 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                                             <th><?= __('Pax') ?></th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Double</td>
-                                            <td>1</td>
-                                            <td>1</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Suite</td>
-                                            <td>1</td>
-                                            <td>3</td>
-                                        </tr>
-                                    </tbody>
                                 </table>
                             </div>
                         </div>
                         <div class="box-footer">
-                            <button type="button" class="btn btn-default"><i class="fa fa-edit"></i> <?= __('Edit') ?></button>
-                            <button type="button" class="btn btn-default"><i class="fa fa-trash"></i> <?= __('Delete') ?></button>
+                            <button id="rsto-circuit-edit-room" type="button" class="btn btn-default"><i class="fa fa-edit"></i> <?= __('Edit') ?></button>
+                            <button id="rsto-circuit-delect-room" type="button" class="btn btn-default"><i class="fa fa-trash"></i> <?= __('Delete') ?></button>
                             <button type="button" class="btn btn-primary pull-right" id="rsto-circuit-day-room-list-add-btn"><i class="fa fa-plus"></i> <?= __('Add') ?></button>
                         </div>
                     </div>
@@ -267,7 +263,63 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
     </div>
 </div>
 <?php $this->end() ?>
-<<<<<<< HEAD
+<?php $this->start('rsto_circuit_day_room_list_modal') ?>
+<div class="modal fade rsto-modal" id="rsto-circuit-day-room-add-list-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span></button>
+                <h4 class="modal-title"><?= __("Add a room") ?></h4>
+            </div>
+            <form id="rsto-circuit-day-add-room-form" name="rsto-circuit-day-room-list-form" class="rsto-form" role="form" data-x-csrf-token="<?= $x_csrf_token ?>" data-action-url="" data-edit-url="">
+                <div class="modal-body">
+                    <input type="hidden" class="form-control" id="rsto-circuit-day-room-id">
+                    <div class="form-group">
+                        <label for="rsto-circuit-day-room-list-room-type-plan"><?= __('Room type') ?></label>
+                        <select name="room_type" class="form-control rsto-select" data-required="true" id="rsto-circuit-day-room-list-room-type-plan" data-url="<?= $rsto_circuit_room_add_url ?>" data-placeholder="<?= __("Choose a room type") ?>"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="rsto-circuit-day-room-list-room-count"><?= __('Count') ?></label>
+                        <input type="text" class="form-control" id="rsto-circuit-day-room-count-plan" placeholder="Room count">
+                    </div>
+                    <div class="form-group">
+                        <label for="rsto-circuit-day-room-list-room-pax"><?= __('Pax') ?></label>
+                        <input type="text" class="form-control" id="rsto-circuit-day-pax-plan" placeholder="Room pax">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><?= __('Cancel') ?></button>
+                    <button type="button" class="btn btn-primary" id="rsto-circuit-day-room-form-submit-btn"><?= __('Save') ?>&nbsp;</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<?php $this->end() ?>
+<?php $this->start('rsto_circuit_day_specify_modal') ?>
+<div class="modal fade rsto-modal" id="rsto-circuit-day-specify-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span></button>
+                <h4 class="modal-title"><?= __("Add a specify") ?></h4>
+            </div>
+            <form id="rsto-service-form" class="rsto-form" role="form" data-x-csrf-token="<?= $x_csrf_token ?>" data-action-url="" data-edit-url="">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label><?= __('Service') ?></label>
+                        <select name="service" class="form-control rsto-select" data-required="true" data-url="/rsmandimby/circuits/room_type_select2" data-placeholder="<?= __("Choose a service") ?>"></select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal"><?= __('Cancel') ?></button>
+                        <button type="submit" class="btn btn-primary disabled" id="rsto-service-form-submit-btn"><?= __('Save') ?>&nbsp;</button>
+                    </div>
 
-=======
->>>>>>> c619dded6df9703cf53cf513b27b4ebcdb9c9a33
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<?php $this->end() ?>

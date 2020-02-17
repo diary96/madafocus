@@ -21,8 +21,10 @@ class CircuitDailyController extends AppController {
      * @var \Cake\ORM\Table
      */
     protected $tripChildInfo;
+    protected  $trip_all;
     public $actionsPrivileges = [
         'datatable' => '11.1',
+        'alwaysdrive' => '11.1',
     ];
 
     public function index() {
@@ -31,10 +33,13 @@ class CircuitDailyController extends AppController {
     public function initialize() {
         parent::initialize();
         $this->datatableTable = TableRegistry::getTableLocator()->get('ViewTripDet');
+        $this->trip_all = TableRegistry::getTableLocator()->get('TripDet');
         $this->datatableAdditionalColumns = [
             ["data"=>"id_places"],
             ["data"=>"id_carrier"],
             ["data"=>"id_hotel"],
+            ["data"=>"id_carrier_vehicle"],
+            ["data"=>"vehicle_registration"]
         ];
         $this->datatableFilters = ['id_trips' => 'id_trips'];
         $this->tripChildInfo = TableRegistry::getTableLocator()->get('TripDet');
@@ -55,6 +60,27 @@ class CircuitDailyController extends AppController {
         } else {
             $this->raise404(sprintf("ID %s doesn't exist!", $this->request->getQuery('id_directory_contact_information')));
         }
+    }
+
+    public function alwaysdrive(){
+        $this->jsonOnly();
+        $_id_trip = $this->request->getQuery('id', 'null');
+        $carrier = $this->request->getData('carrier');
+        $vehicle = $this->request->getData('vehicle');
+        if($_id_trip === 'null'){
+            $this->setJSONResponse(false);
+            return;
+        }
+        $this->trip_all->updateAll(
+            array('carrier' => $carrier),
+            array('id_trips' => $_id_trip));
+        $this->trip_all->updateAll(
+            array('id_carrier_vehicle' => $vehicle),
+            array('id_trips' => $_id_trip));
+
+        $this->setJSONResponse([
+            'success' => true,
+        ] );
     }
 
 }
