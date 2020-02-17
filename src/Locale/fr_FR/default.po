@@ -1,0 +1,89 @@
+msgid "Aéroports et ports"
+msgstr "Aéroports et ports"
+
+
+
+msgid "Annuaires"
+msgstr "Annuaires"
+
+msgid "(Aucun)"
+msgstr "(Aucun)"
+
+msgid "Déconnexion"
+msgstr "Déconnexion"
+
+msgid "Hôtels"
+msgstr "Hôtels"
+
+msgid "Le nom d'utilisateur ou le mot de passe est incorrect"
+msgstr "Le nom d'utilisateur ou le mot de passe est incorrect"
+
+msgid "Lieux"
+msgstr "Lieux"
+
+msgid "MENU DE NAVIGATION"
+msgstr "MENU DE NAVIGATION"
+
+msgid "Mon compte"
+msgstr "Mon compte"
+
+msgid "Mot de passe"
+msgstr "Mot de passe"
+
+msgsid "Mot de passe oublié"
+msgstr "Mot de passe oublié"
+
+msgid "Nom"
+msgstr "Nom"
+
+msgid "Nom d'utilisateur"
+msgstr "Nom d'utilisateur"
+
+msgid "Parcs et guidages"
+msgstr "Parcs et guidages"
+
+msgid "Prénom"
+msgstr "Prénom"
+
+msgid "Réduire le menu"
+msgstr "Réduire le menu"
+
+msgid "S'authentifier"
+msgstr "S'authentifier"
+
+msgid "Services divers"
+msgstr "Services divers"
+
+msgid "Se souvenir de moi"
+msgstr "Se souvenir de moi"
+
+msgid "Tableau de bord"
+msgstr "Tableau de bord"
+
+msgid "Transporteurs"
+msgstr "Transporteurs"
+
+msgid "Veuillez vous authentifier"
+msgstr "Veuillez vous authentifier"
+
+msgid "Voir toutes les notifications"
+msgstr "Voir toutes les notifications"
+
+msgid "Voir tous les messages"
+msgstr "Voir tous les messages"
+
+msgid "Voir toutes les tâches"
+msgstr "Voir toutes les tâches"
+
+masgid "Vous n'avez aucun message"
+msgstr "Vous n'avez aucun message"
+
+msgid "Vous avez {0} message(s)"
+msgstr "Vous avez {0} message(s)"
+
+msgid "Vous avez {0} notofication(s)"
+msgstr "Vous avez {0} notofication(s)"
+
+msgid "Vous avez {0} tâches(s)"
+msgstr "Vous avez {0} tâches(s)"
+
