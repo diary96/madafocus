@@ -535,7 +535,7 @@ $.fn.extend({
                                 alert(xhr.responseText, 'error');
                             }
                             var _message = '<b>{0}</b><br>File :{1}<br>Line: {2}'.format(_response.message, _response.file, _response.line);
-                            alert(_message, 'danger');
+                            alert(_message, 'error');
                         }
                     });
                 }
@@ -566,6 +566,9 @@ $.fn.extend({
         });
     },
     RSTOIsValid: function () {
+        if($(this).attr('data-ignore-validation') === 'true'){
+            return true;
+        }
         return this[0]._RSTOIsValid;
     },
     RSTOModal: function () {
@@ -710,9 +713,13 @@ $.fn.extend({
                             'x-csrf-token': _this.closest('form').attr('data-x-csrf-token')
                         },
                         'error': function (xhr) {
-                            var _response = JSON.parse(xhr.responseText);
-                            var _message = '<b>{0}</b><br>File :{1}<br>Line: {2}'.format(_response.message, _response.file, _response.line);
-                            alert(_message, 'danger');
+                            try{
+                                var _response = JSON.parse(xhr.responseText);
+                                var _message = '<b>{0}</b><br>File :{1}<br>Line: {2}'.format(_response.message, _response.file, _response.line);
+                                alert(_message, 'error');
+                            } catch(e){
+                                alert(e + "<br>" + xhr.responseText, 'error');
+                            }
                         }
                     }
                 });
@@ -780,6 +787,10 @@ $.fn.extend({
         return this.each(function () {
             var _this = $(this);
             if (_this[0].tagName.toLowerCase() === 'form') {
+                if(_this.attr('data-ignore-validation') === 'true'){
+                    _this.trigger('afterValidation.rsto', [true]);
+                    return;
+                }
                 var _isValid = true;
                 var _isNotOriginal = false;
                 $.each(_this.find('input,select,textarea'), function (i, e) {
