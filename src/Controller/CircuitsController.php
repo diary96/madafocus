@@ -27,6 +27,9 @@ class CircuitsController extends AppController{
     protected $hotels;
     protected $trip_det;
     protected $view_room_trip_dep_hotel;
+    protected $specify;
+    protected $view_specify_service;
+    protected $view_services;
     protected $rooms;
     protected $pageInfos = [
         'title' => 'Circuits',
@@ -42,6 +45,7 @@ class CircuitsController extends AppController{
         'select2' => '11.1',
         'datatable' => '11.1',
         'serviceSelect2' => '11.1',
+        'currencySelect2' => '11.1',
         'add' => '11.2',
         'update' => '11.2',
         'validate' => '11.2',
@@ -54,6 +58,9 @@ class CircuitsController extends AppController{
         'updatedaily' => '11.1',
         'roomHotel' => '11.1',
         'editCircuit' => '11.1',
+        'servicesListByPlace' => '11.1',
+        'specifyList' => '11.1',
+        'editSpecify' => '11.1',
     ];
 
     /**
@@ -77,7 +84,7 @@ class CircuitsController extends AppController{
         // $_post
         $_params = $this->request->getData();
 
-        $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('ViewServices');
+        $_params['table'] = TableRegistry::getTableLocator()->get('ViewServices');
         $_params['filters'] = ['id_place' => 101];
         foreach ([['data' => 'id_place'], ['data' => 'description'], ['data' => 'id_type']] as $_column) {
             array_push($_params['columns'], array_merge($_columnModel, $_column));
@@ -91,14 +98,27 @@ class CircuitsController extends AppController{
     public function places() {
         $this->jsonOnly();
         $_params = $this->request->getData();
-        $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('ViewPlaces');
+        $_params['table'] = TableRegistry::getTableLocator()->get('ViewPlaces');
         $_params['column'] = 'name';
         $this->setJSONResponse($this->loadComponent('Select2', $_params)->get());
     }
 
+    public function servicesListByPlace() {
+        $this->jsonOnly();
+        $id_place = $this->request->getQuery('place', '0');
+        if ($id_place != '0') {
+            $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('ViewServices');
+            $_params['column'] = 'type_name';
+            $_params['filters'] = ['id_place'=> $id_place];
+            $this->setJSONResponse($this->loadComponent('Select2', $_params)->get());
+        }
+
+    }
+
+
     public function carrier(){
         $this->jsonOnly();
-        $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('ViewCarriers');
+        $_params['table'] = TableRegistry::getTableLocator()->get('ViewCarriers');
         $_params['column'] = 'title_name';
         $this->setJSONResponse($this->loadComponent('Select2', $_params)->get());
     }
@@ -107,7 +127,7 @@ class CircuitsController extends AppController{
     public function vehicletype(){
         $this->jsonOnly();
         $id_carrier = $this->request->getQuery('carrier', 'null');
-        $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('ViewSelectOptions');
+        $_params['table'] = TableRegistry::getTableLocator()->get('ViewSelectOptions');
         $_params['column'] = 'option';
         $_params['filters'] = ['id_select'=> CircuitsController::ID_TYPE_VEHICLE];
         $this->setJSONResponse($this->loadComponent('Select2', $_params)->get());
@@ -116,7 +136,7 @@ class CircuitsController extends AppController{
     public function hotel(){
         $this->jsonOnly();
         $id_place = $this->request->getQuery('place', 'null');
-        $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('Hotels');
+        $_params['table'] = TableRegistry::getTableLocator()->get('Hotels');
         $_params['column'] = 'name';
         $_params['filters'] = ['place' => $id_place];
         $this->setJSONResponse($this->loadComponent('Select2', $_params)->get());
@@ -131,9 +151,9 @@ class CircuitsController extends AppController{
             if (is_object($hotel)) {
                 $restaurant = $hotel->have_restaurant;
                 if ($restaurant == '0') {
-                    $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('ViewSelectOptionsWithoutRestaurant');
+                    $_params['table'] = TableRegistry::getTableLocator()->get('ViewSelectOptionsWithoutRestaurant');
                 } else {
-                    $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('ViewSelectOptions');
+                    $_params['table'] = TableRegistry::getTableLocator()->get('ViewSelectOptions');
                 }
                 $_params['column'] = 'option';
                 $_params['filters'] = ['id_select' => HotelRoomsController::MEAL_TYPE_ID_SELECT ];
@@ -151,7 +171,7 @@ class CircuitsController extends AppController{
     public function roomTypeSelect2(){
         $this->jsonOnly();
         $id_hotel = $this->request->getQuery('hotel', '0');
-        $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('ViewHotelRooms');
+        $_params['table'] = TableRegistry::getTableLocator()->get('ViewHotelRooms');
         $_params['column'] = 'type_name';
         $_params['filters'] = ['id_hotel' =>$id_hotel];
         $this->setJSONResponse($this->loadComponent('Select2', $_params)->get());
@@ -159,14 +179,22 @@ class CircuitsController extends AppController{
 
     public function serviceSelect2(){
         $this->jsonOnly();
-        $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('ViewService');
+        $_params['table'] = TableRegistry::getTableLocator()->get('ViewService');
         $_params['column'] = 'type_name';
+        $this->setJSONResponse($this->loadComponent('Select2', $_params)->get());
+    }
+
+    public function currencySelect2(){
+        $this->jsonOnly();
+        $_params['table'] = TableRegistry::getTableLocator()->get('select_options');
+        $_params['column'] = 'option';
+        $_params['filters'] = ['group' => 1];
         $this->setJSONResponse($this->loadComponent('Select2', $_params)->get());
     }
 
     public function tourOperator(){
         $this->jsonOnly();
-        $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('TourOperators');
+        $_params['table'] = TableRegistry::getTableLocator()->get('TourOperators');
         $_params['column'] = 'name';
         $this->setJSONResponse($this->loadComponent('Select2', $_params)->get());
     }
@@ -192,7 +220,11 @@ class CircuitsController extends AppController{
         $this->set('rsto_circuit_room_add_url', Router::url('/circuits/room_type_select2'));
         $this->set('rsto_circuit_room_hotel_datatable_url', Router::url('/circuits/room_hotel'));
         $this->set('rsto_circuit_edit_room_hotel', Router::url('/circuits/edit_circuit'));
+        $this->set('rsto_circuit_edit_specify', Router::url('/circuits/edit_specify'));
         $this->set('rsto_circuit_always_use_url', Router::url('/circuitdaily/alwaysdrive'));
+        $this->set('rsto_circuit_list_service_by_place', Router::url('/circuits/services_list_by_place'));
+        $this->set('rsto_circuit_list_specify_by_trip', Router::url('/circuits/specify_list'));
+        $this->set('rsto_circuit_currency_url', Router::url('/circuits/currencySelect2'));
     }
 
     public function quote() {
@@ -275,18 +307,34 @@ class CircuitsController extends AppController{
         $this->jsonOnly();
 
         $_id = $this->request->getQuery('id');
-        $_circuit = $this->trip_mere->get($_id);
-        //echo $_circuit;
-        if (is_object($_circuit)) {
-            //$_circuit->id_status = $this->request->getData('ID_STATUS');
+        $tourOperator = TableRegistry::getTableLocator()->get('TourOperators');
+        $old = $this->trip_mere->get($_id);
+        $tourId = $this->request->getData('tour_operator');
+        $tourData = $tourOperator->find()->where(['id_tour_operator' => $tourId])->first();
+        // if (is_object($_circuit)) {
+            $_circuit = $this->trip_mere->newEntity();
+            $idSplit = explode("-", $_id);
+            $_circuit->id_trips = $tourData->name.'-'.$idSplit[1];
+            $_circuit->id_status = $old->id_status;
             $_circuit->start = $this->request->getData('start');
             $_circuit->duration = $this->request->getData('duration');
             $_circuit->adults = $this->request->getData('adults');
             $_circuit->childrens = $this->request->getData('childrens');
             $_circuit->self_drive = $this->request->getData('self_drive');
-            $_circuit->tour_operator = $this->request->getData('tour_operator');
+            $_circuit->tour_operator = $tourId;
             $_circuit->num_vol = $this->request->getData('num_vol');
             $_circuit->arriving_time = $this->request->getData('arriving_time');
+            $_circuit->currency = $this->request->getData('currency');
+            $this->trip_mere->save($_circuit);
+
+            if($_id != $_circuit->id_trips){
+                $this->trip_det->query()->update()
+                    ->set(['id_trips' => $_circuit->id_trips])
+                    ->where(['id_trips' => $_id])
+                    ->execute();
+                $this->trip_mere->delete($old);
+                $_id = $_circuit->id_trips;
+            }
 
             $nb = $this->trip_det->find()->where(['id_trips' => $_id])->count();
             $nbAll = $this->trip_det->find()->count();
@@ -311,11 +359,11 @@ class CircuitsController extends AppController{
                 }
             }
             $this->setJSONResponse([
-                'success' => $this->trip_mere->save($_circuit) !== false,
+                'success' =>  true,
                 'row' => $_circuit
             ]);
             return;
-        }
+        // }
         $this->raise404(sprintf("L'id %s n'existe pas", $_id));
     }
     public function updatedaily() {
@@ -364,7 +412,31 @@ class CircuitsController extends AppController{
             'row'=>  $data
         ]);
         return;
+    }
+    public function editSpecify() {
+        $this-> jsonOnly();
+        $data = $this->request->input('json_decode', 'true');
+        $id_trip = $this->request->getQuery('id_trip', '');
+        $length = sizeof($data);
+        $success = true;
+        $this->specify->deleteAll(['ID_TRIP' => $id_trip]);
+        for ($i=0; $i<$length;$i++){
+            $entity = new Entity();
+            if (array_key_exists('id',$data[$i])) {
+                $entity->ID_SPECIFY = $data[$i]['id'];
+            }
+            $entity->ID_TRIP = $data[$i]['id_trip'];
+            $entity->CHILDREN = $data[$i]['children'];
+            $entity->ADULT = $data[$i]['adult'];
 
+            if(!$this->specify->save($entity)) $success=false;
+        }
+
+        $this->setJSONResponse([
+            'success'=> $success,
+            'row'=>  $data
+        ]);
+        return;
     }
     public function initialize() {
         parent::initialize();
@@ -380,6 +452,9 @@ class CircuitsController extends AppController{
         $this->trip_det = TableRegistry::getTableLocator()->get('TripDet');
         $this->view_room_trip_dep_hotel = TableRegistry::getTableLocator()->get('ViewRoomTripDepHotel');
         $this->rooms = TableRegistry::getTableLocator()->get('Room');
+        $this->specify = TableRegistry::getTableLocator()->get('Specify');
+        $this->view_services = TableRegistry::getTableLocator()->get('ViewServices');
+        $this->view_specify_service = TableRegistry::getTableLocator()->get('ViewSpecifyService');
 
         $this->datatableAdditionalColumns = [
              ['data' => 'ADULTS'],
@@ -389,13 +464,15 @@ class CircuitsController extends AppController{
              ['data' => 'ID_STATUS'],
              ['data' => 'num_vol'],
              ['data' => 'arriving_time'],
+             ['data' => 'id_currency'],
+             ['data' => 'currency_lib'],
              ['data' => 'self_drive']
         ];
     }
-
     public function validate(){
         $this->jsonOnly();
         $_entry = $this->trip_mere->get($this->request->getData('id'));
+        // 2: validated
         $_entry->id_status = 2;
         if (is_object($_entry)) {
             $this->setJSONResponse($this->trip_mere->save($_entry));
@@ -403,13 +480,13 @@ class CircuitsController extends AppController{
             $this->raise404('Incomplete data!');
         }
     }
-
     public function add() {
         $this->jsonOnly();
         $_entry = $this->circuits->newEntity($this->request->getData());
         $nb = $this->circuits->find()->count();
         $to = $this->select2Table->find()->where(['id_tour_operator' => $_entry->tour_operator])->first();
         $_entry->id_trips = $to->name.'-'.$nb;
+        // 1: waiting for validation
         $_entry->id_status = '1';
         $valn = $this->circuits->save($_entry);
         $date = date_format($_entry->start,"Y-m-d");
@@ -431,7 +508,6 @@ class CircuitsController extends AppController{
             $this->raise404('Incomplete data!');
         }
     }
-
     public function roomHotel() {
         $this->jsonOnly();
         $_id_trip = $this->request->getQuery('id_trip', 'null');
@@ -441,6 +517,15 @@ class CircuitsController extends AppController{
         }
         $_query = $this->view_room_trip_dep_hotel->find()->where(["id_trip" => $_id_trip]);
         $this->setJSONResponse($_query->all() );
-
+    }
+    public function specifyList() {
+        $this->jsonOnly();
+        $_id_trip = $this->request->getQuery('id_trip', 'null');
+        if($_id_trip === 'null'){
+            $this->setJSONResponse(false);
+            return;
+        }
+        $_query = $this->view_specify_service->find()->where(["id_trip" => $_id_trip]);
+        $this->setJSONResponse($_query->all() );
     }
 }

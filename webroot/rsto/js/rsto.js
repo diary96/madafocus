@@ -471,6 +471,13 @@ $.fn.extend({
             throw "RSTODatatableSelected works only on table DOM";
         }
     },
+    RSTODatableResetSelectedData: function() {
+        if (this.length === 1 && this[0].tagName.toLowerCase() === 'table') {
+            this[0]._RSTODatatableSelectedData = undefined;
+        } else {
+            throw "RSTODatatableSelected works only on table DOM";
+        }
+    },
     RSTODisable: function () {
         return this.each(function () {
             var _this = $(this);
