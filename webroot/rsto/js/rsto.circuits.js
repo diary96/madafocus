@@ -1,5 +1,3 @@
-
-
 var RSTOCircuits = {
     xCSRFToken: null,
     table: $('#rsto-circuit-datatable'),
@@ -182,14 +180,17 @@ var RSTOTripChild = {
     xCSRFToken: null,
     table: $('#rsto-circuit-days-datatable'),
     tableRoom: $('#rsto-circuit-day-hotel-rooms-datatatable'),
+    tableSpecify: $('#rsto-circuit-day-specify-datatable'),
     datatable: null,
     datatableRoom: [],
-    listModal: $('#rsto-circuit-days-modal'),
+    datatableSpecify: [],
     listModal: $('#rsto-circuit-days-modal'),
     configureModal: $('#rsto-circuit-day-modal'),
     form: $('#rsto-trip-det-form'),
     formAddRoom: $('#rsto-circuit-day-add-room-form'),
+    formAddSpecify: $('#rsto-circuit-service-form'),
     modalAddNewRoom: $('#rsto-circuit-day-room-add-list-modal'),
+    modalAddNewSpecify: $('#rsto-circuit-day-specify-modal'),
     rowSelectedRoom: null,
     fields: {
         id_hotel: $('#rsto-circuit-day-hotel'),
@@ -202,32 +203,46 @@ var RSTOTripChild = {
         id_room: $('#rsto-circuit-day-room-list-room-type-plan'),
         id_count_room: $('#rsto-circuit-day-room-count-plan'),
         id_pax_room: $('#rsto-circuit-day-pax-plan'),
-        meal_plan: $('#rsto-circuit-meal-plan')
+        meal_plan: $('#rsto-circuit-meal-plan'),
+
+        circuit_list: $('#rsto-circuit-list-circuit'),
     },
     buttons: {
         configure: $('#rsto-circuit-day-configure-btn'),
         addRoom: $('#rsto-circuit-day-room-list-add-btn'),
+        addSpecify: $('#rsto-circuit-day-specify-add-btn'),
         editRoom: $('#rsto-circuit-edit-room'),
-        addSpecify: $('#rsto-service-form-submit-btn'),
+        editSpicify: $('#rsto-circuit-specify-edit-btn'),
         deleteRoon: $('#rsto-circuit-delect-room'),
+        deleteSpecify: $('#rsto-circuit-specify-delete-btn'),
         saveAddRoom: $('#rsto-circuit-day-room-form-submit-btn'),
+        saveAddSpecify: $('#rsto-circuit-service-form-submit-btn'),
         always_drive: $('#rsto-circuit-always-drive-form-submit-btn'),
     },
     dataRoomTemp: null,
+    dataSpecifyTemp: null,
     init: function () {
         var circuits = RSTOCircuits;
         var _me = RSTOTripChild;
 
-       _me.xCSRFToken = circuits.xCSRFToken;
+        _me.xCSRFToken = circuits.xCSRFToken;
+
+        _me.buttons.addSpecify.click( function () {
+            _me.formAddSpecify.RSTOReset();
+            loadDataSpecify();
+            _me.modalAddNewSpecify.modal('show');
+        });
+
         _me.buttons.addRoom.click( function () {
             _me.formAddRoom.RSTOReset();
             _me.fields.id_room.RSTODataURLQuery({hotel:_me.fields.id_hotel.val()});
             _me.modalAddNewRoom.modal('show');
         });
+        // Event on click edit room
         _me.buttons.editRoom.click( function() {
             _me.formAddRoom.RSTOReset();
             var selectedData = _me.tableRoom.RSTODatatableSelectedData();
-            console.log(selectedData);
+
             _me.fields.id_selected.val(selectedData.id);
             _me.fields.id_room.RSTODataURLQuery({hotel:_me.fields.id_hotel.val()});
             _me.fields.id_room.RSTOOriginalValue(selectedData.id, selectedData.type_name);
@@ -235,6 +250,15 @@ var RSTOTripChild = {
             _me.fields.id_pax_room.RSTOOriginalValue(selectedData.pax)
             _me.modalAddNewRoom.modal('show');
         });
+        // Event on click edit specify
+        _me.buttons.editSpicify.click( function () {
+            _me.formAddSpecify.RSTOReset();
+            var selectedData = _me.tableSpecify.RSTODatatableSelectedData();
+            _me.fields.circuit_list.RSTODataURLQuery({place: _me.fields.id_places.val()})
+            _me.fields.circuit_list.RSTOOriginalValue(selectedData.id, selectedData.type_name);
+            _me.modalAddNewSpecify.modal('show');
+        })
+        // Event on clicl always drive_
         _me.buttons.always_drive.click( function() {
             if(_me.fields.carrier.val()!= null && _me.fields.id_carrier_vehicle.val() != null){
                 var url = _me.buttons.always_drive.attr('data-url') + "?id=" + circuits.table.RSTODatatableSelectedData().id;
@@ -254,12 +278,11 @@ var RSTOTripChild = {
             }
 
         });
-
        // On change place
         _me.fields.id_places.change(function(){
             // load hotel by id_place
             _me.fields.id_hotel.RSTODataURLQuery({place: _me.fields.id_places.val()});
-            _me.fields.id_meal.RSTODataURLQuery({hotel: _me.fields.id_places.val()});
+            _me.fields.circuit_list.RSTODataURLQuery({place: _me.fields.id_places.val()});
 /*
             console.log(_me.fields.id_hotel);
             _me.fields.id_hotel[0].value = null;
@@ -273,9 +296,8 @@ var RSTOTripChild = {
         });
         // On change hotel
         _me.fields.id_hotel.change( function () {
-            console.log(_me.fields.id_hotel.val());
             // load Meal plan by hotel
-           // _me.fields.id_meal.RSTODataURLQuery({hotel: _me.fields.id_hotel.val()});
+            _me.fields.id_meal.RSTODataURLQuery({hotel: _me.fields.id_hotel.val()});
         });
         // On change carrier
         _me.fields.carrier.change( function() {
@@ -283,8 +305,6 @@ var RSTOTripChild = {
             // _me.fields.id_carrier_vehicle.RSTODataURLQuery({carrier: _me.fields.carrier.val()});
 
         });
-
-        // configure dependencies
 
         // Show daily trip
         circuits.buttons.configure.click( function () {
@@ -314,6 +334,7 @@ var RSTOTripChild = {
             // display the configure button
             _me.buttons.configure.RSTOEnable();
         });
+        // fonction pour transformer une liste de donnee en donnee pour datatable
         var transform = function(dataObject, columns) {
             var response = []
             for(var data of dataObject) {
@@ -327,6 +348,7 @@ var RSTOTripChild = {
 
 
         }
+        // reloader datatable temporaire Table Room
         var loadData = function() {
             _me.tableRoom.DataTable().clear().destroy();
             var dataSet = _me.dataRoomTemp;
@@ -343,6 +365,23 @@ var RSTOTripChild = {
             });
             _me.fields.id_selected.val('');
         }
+        // reloader datatable temporaire Table Specify
+        var loadDataSpecify = function() {
+            _me.tableSpecify.DataTable().clear().destroy();
+            _me.tableSpecify.RSTODatableResetSelectedData();
+            var dataSet = _me.dataSpecifyTemp;
+            console.log(_me.tableSpecify.RSTODatatableSelectedData());
+            _me.tableSpecify.DataTable({
+                data: dataSet,
+                columns: [
+                    { "data": "type_name" },
+                ],
+                createdRow: function (row, data) {
+                    $(row).RSTOSelectableDatatableRow(_me.tableSpecify, data);
+                }
+            });
+        }
+        // on edit daily trip, event lorsque le boutton config (daily)
         _me.buttons.configure.click( function() {
             // initForm();
             _me.form.RSTOReset();
@@ -358,9 +397,8 @@ var RSTOTripChild = {
             // populate ALL select 2 form
             _me.fields.id_hotel.RSTODataURLQuery({place: _me.fields.id_places.val()});
             _me.fields.id_meal.RSTODataURLQuery({hotel:_me.fields.id_hotel.val()});
+            _me.fields.circuit_list.RSTODataURLQuery({place: _me.fields.id_places.val()})
             // populate datable of room by id trip dep
-           //  var url = _me.tableRoom.RSTODataURLReturnQuery({id_trip: dataSelected.id});
-           //  console.log(_me.tableRoom);
             var url = _me.tableRoom[0].baseURI + '/room_hotel?id_trip=' + dataSelected.id;
             $.ajax({ url: url,
                 type: 'get',
@@ -370,21 +408,35 @@ var RSTOTripChild = {
                 },
                 success: function(output) {
                     if (output){
-                        console.log(output);
                         _me.dataRoomTemp = output;
                         loadData();
                     }
                 }
             });
 
-
+            var urlSpecify = _me.formAddSpecify.attr('data-get-url') + '?id_trip=' + dataSelected.id;
+            console.log(urlSpecify);
+            $.ajax({ url: urlSpecify,
+                type: 'get',
+                dataType: 'json',
+                headers: {
+                    'x-csrf-token': _me.xCSRFToken
+                },
+                success: function(output) {
+                    if (output){
+                        console.log(output);
+                        _me.dataSpecifyTemp = output;
+                        loadDataSpecify();
+                    }
+                }
+            });
 
             _me.configureModal.RSTOModalTitle("Day - {0}".format(dataSelected.day));
             _me.configureModal.modal('show');
             // Update data-edit-url
             _me.form.RSTODataURLQuery({'id': dataSelected.id}, 'data-edit-url');
         });
-        // Ajout dans un object temporaire pour le traitement necessaire
+        // Rechercher un room dans la liste temporaire
         var findOnTemp = function(id_room){
             console.log(id_room);
             for(var temp of _me.dataRoomTemp) {
@@ -395,6 +447,7 @@ var RSTOTripChild = {
             }
             return null;
         }
+        // Event on click, permet de sauvegarder temporairement ROOM
         _me.buttons.saveAddRoom.click( function () {
             var _selectedTrip = _me.table.RSTODatatableSelectedData();
 
@@ -454,6 +507,45 @@ var RSTOTripChild = {
             }
 
         });
+        var findOnSpecifyTemp = function(id_service){
+            for (temp of _me.dataSpecifyTemp) {
+                if (temp.id == id_service){
+                    return temp;
+                }
+            }
+            return null;
+        }
+        // Event on click, permet de sauvegarder temporairement SPECiFY
+        _me.buttons.saveAddSpecify.click( function () {
+            var _selectedTrip = _me.table.RSTODatatableSelectedData();
+            const dataSelect = _me.tableSpecify.RSTODatatableSelectedData();
+            console.log(dataSelect);
+            if(dataSelect) {
+                var rowToChange = _me.dataSpecifyTemp[_me.dataSpecifyTemp.indexOf(dataSelect)];
+                console.log(_me.fields.circuit_list);
+                rowToChange.id = _me.fields.circuit_list.val();
+                rowToChange.id_trip = _selectedTrip.id;
+                rowToChange.type_name = _me.fields.circuit_list[0].innerText;
+                loadDataSpecify();
+
+                _me.formAddSpecify.RSTOReset();
+                _me.modalAddNewSpecify.modal('hide');
+                return;
+            }
+            if(findOnSpecifyTemp(_me.fields.circuit_list.val())) {
+                alert('Ce service est déjà dans la liste');
+                return
+            }
+            var object = {
+                id: _me.fields.circuit_list.val(),
+                id_trip: _selectedTrip.id,
+                type_name: _me.fields.circuit_list[0].innerText
+            }
+            _me.dataSpecifyTemp.push(object);
+            _me.formAddSpecify.RSTOReset();
+            _me.modalAddNewSpecify.modal('hide');
+            loadDataSpecify();
+        });
         // supprimer une ligne du datable tempo sans affecter la base de donnée
         _me.buttons.deleteRoon.click( function() {
             var selectedElement = _me.tableRoom.RSTODatatableSelectedData();
@@ -463,7 +555,15 @@ var RSTOTripChild = {
                 loadData();
             }
         });
-
+        // supprimer une ligne du datable tempo specify sans affecter la base de donnée
+        _me.buttons.deleteSpecify.click( function() {
+            var selectedElement = _me.tableSpecify.RSTODatatableSelectedData();
+            if(_me.dataSpecifyTemp){
+                _me.dataSpecifyTemp.splice(_me.dataSpecifyTemp.indexOf(selectedElement),1);
+                loadDataSpecify();
+            }
+        });
+        // Event on submitted, permet de dectecter et traiter la sauvegarde
         _me.form.on('submitted.rsto', function (e, response) {
             if (response.success === true) {
                 var _editMode = _me.form.attr('data-edit') === 'true';
@@ -474,10 +574,10 @@ var RSTOTripChild = {
                 alert(RSTOMessages.Error);
             }
         });
+        // Event on submit, permet de sauvegarder les donnees room dans la base de donnee
         _me.form.on('submit', function(e) {
             var _selectedTrip = _me.table.RSTODatatableSelectedData();
             const url = _me.form.attr('data-room-url');
-            console.log(_me.dataRoomTemp);
             $.ajax({
                 url: url + '?' + $.param({ id_trip: _selectedTrip.id }),
                 type: 'post',
@@ -491,6 +591,25 @@ var RSTOTripChild = {
                     if (output){
                         console.log(output);
                         _me.dataRoomTemp = output;
+                        loadData();
+                    }
+                }
+            });
+
+            const urlSpecify = _me.form.attr('data-specify-url');
+            $.ajax({
+                url: urlSpecify + '?' + $.param({ id_trip: _selectedTrip.id }),
+                type: 'post',
+                dataType: 'json',
+                data: JSON.stringify(_me.dataSpecifyTemp),
+                headers: {
+                    'x-csrf-token': _me.xCSRFToken,
+                    'Content-Type': 'application/json'
+                },
+                success: function(output) {
+                    if (output){
+                        console.log(output);
+                        _me.dataSpecifyTemp = output;
                         loadData();
                     }
                 }
