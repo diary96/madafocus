@@ -1,4 +1,7 @@
-<section class="invoice">
+<?php
+  $this->Html->script('/rsto/js/rsto.quote.js', ['block' => true]);
+?>
+<section class="invoice" id="quote" data-url="<?= $rsto_circuit_quote_url ?>">
   <!-- title row -->
   <div class="row">
     <div class="col-xs-12">
@@ -36,9 +39,9 @@
     </div>
     <!-- /.col -->
     <div class="col-sm-4 invoice-col">
-        Reference: BET 19281<br>
-        Arrival date: 04 - 06 - 2019<br>
-        Date: 21 - 05 – 2019
+        Reference: <span id="ref"></span><br>
+        Arrival date: <span id="start"></span><br>
+        Date: <?php echo date('m-d-Y'); ?>
     </div>
     <!-- /.col -->
   </div>
@@ -47,7 +50,7 @@
   <!-- Table row -->
   <div class="row">
       <div class="col-xs-12 table-responsive">
-          <table class="table table-striped table-quote">
+          <table id="tquote" class="table table-striped table-quote">
               <thead>
                   <tr>
                       <th>Day</th>
@@ -58,7 +61,7 @@
                   </tr>
               </thead>
               <tbody>
-                  <tr>
+                  <!-- <tr>
                       <td>1</td>
                       <td>6/4/20</td>
                       <td>Arrival Antananarivo</td>
@@ -98,7 +101,7 @@
                           25<br>
                           125<br>
                       </td>
-                  </tr>
+                  </tr> -->
               </tbody>
           </table>
       </div>
@@ -123,7 +126,7 @@
             <table class="table table-quote">
                 <tr>
                   <th>Total:</th>
-                  <td>525</td>
+                  <td><span id="total"></span></td>
                 </tr>
             </table>
         </div>

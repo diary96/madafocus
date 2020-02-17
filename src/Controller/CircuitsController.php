@@ -50,6 +50,7 @@ class CircuitsController extends AppController{
         'vehicletype' => '11.1',
         'hotel' => '11.1',
         'meal' => '11.1',
+        'quote' => '11.1',
         'updatedaily' => '11.1',
         'roomHotel' => '11.1',
         'editCircuit' => '11.1',
@@ -89,6 +90,7 @@ class CircuitsController extends AppController{
     }
     public function places() {
         $this->jsonOnly();
+        $_params = $this->request->getData();
         $_params['table'] = \Cake\ORM\TableRegistry::getTableLocator()->get('ViewPlaces');
         $_params['column'] = 'name';
         $this->setJSONResponse($this->loadComponent('Select2', $_params)->get());
@@ -185,10 +187,88 @@ class CircuitsController extends AppController{
         $this->set('rsto_circuits_validate_url', Router::url('/circuits/validate'));
         $this->set('rsto_circuits_select2_data_url', Router::url('/circuits/select2'));
         $this->set('rsto_circuit_trip_det_edit_url', Router::url('/circuits/updatedaily'));
+
+        $this->set('rsto_circuit_quote_url', Router::url('/circuits/quote'));
         $this->set('rsto_circuit_room_add_url', Router::url('/circuits/room_type_select2'));
         $this->set('rsto_circuit_room_hotel_datatable_url', Router::url('/circuits/room_hotel'));
         $this->set('rsto_circuit_edit_room_hotel', Router::url('/circuits/edit_circuit'));
+        $this->set('rsto_circuit_always_use_url', Router::url('/circuitdaily/alwaysdrive'));
+    }
 
+    public function quote() {
+        $this->jsonOnly();
+
+        // $this->trip_mere = TableRegistry::getTableLocator()->get('TripMere');
+        $_id = $this->request->getData('id');
+        $trip = $this->trip_mere->find()->where(['id_trips' => $_id])->first();
+
+        $trip_det = TableRegistry::getTableLocator()->get('ViewTripDet');
+        // $trip_det = TableRegistry::getTableLocator()->get('TripDet');
+        $tripDetData = $trip_det->find()->where(['id_trips' => $_id])->order(['day' => 'ASC'])->toArray();
+
+        $car_price = TableRegistry::getTableLocator()->get('view_carrier_vehicle_selling_prices');
+        $_provider_price = TableRegistry::getTableLocator()->get('view_provider_selling_prices');
+        $_service_price = TableRegistry::getTableLocator()->get('view_service_selling_prices');
+        $_rooms = TableRegistry::getTableLocator()->get('view_room');
+        $_services = TableRegistry::getTableLocator()->get('view_services');
+        $_specify = TableRegistry::getTableLocator()->get('specify');
+
+        $trip->total = 0;
+        foreach ($tripDetData as $det) {
+            if($det != null){
+                $carPrice = $car_price->find()->where(['id_carrier_vehicle' => $det->id_carrier_vehicle, 'id_currency' => $trip->currency])->first();
+                $trip->currency_name = $carPrice['currency_name'];
+                $listRoomPrice = $_rooms->find()->where(['id_trip' => $det->id, 'id_currency' => $trip->currency])->toArray();
+                // $listRoomPrice = $_rooms->find()->where(['id_trip' => $det->id_trip])->toArray();
+                $price = 0;
+                foreach ($listRoomPrice as $room) {
+                    // BO: 12, BB: 13, HB: 14, FB: 15, DU: 16
+                    if($det->id_select_option == 12) $price += $room->bo * $room->nb_room;
+                    else if($det->id_select_option == 13) $price += $room->bb * $room->nb_room;
+                    else if($det->id_select_option == 14) $price += $room->hb * $room->nb_room;
+                    else if($det->id_select_option == 15) $price += $room->fb * $room->nb_room;
+                    else if($det->id_select_option == 16) $price += $room->du * $room->nb_room;
+                }
+
+                $det->description = array();
+                // array_push($det->description, $listRoomPrice[0]->hotel_name, $carPrice->type_name);
+                $det->description[] = $listRoomPrice[0]->hotel_name;
+                if($carPrice != null) $det->description[] = $carPrice['type_name'];
+
+                $det->prix = array();
+                $det->prix[] = $price;
+                if($carPrice != null) $det->prix[] = $carPrice->full_price;
+
+                $listeSpecify = $_specify->find()->where(['id_trip' => $det->id])->toArray();
+                // $listeSpecify = $_specify->find()->where(['id_trip' => $det->id_trip])->toArray();
+                foreach ($listeSpecify as $specify) {
+                    $service = $_services->find()->where(['id' => $specify->ID_SPECIFY])->first();
+                    $price = 0;
+                    if($service->from_provider == 1){
+                        $provider = $_provider_price->find()->where(['service' => $service->id, 'id_currency' => $trip->currency])->first();
+                        $price = ($specify->ADULT * $provider['adult']) + ($specify->CHILDREN * $provider['children']);
+                    }
+                    else{
+                        $servicePrice = $_service_price->find()->where(['id_service' => $service->id, 'id_currency' => $trip->currency])->first();
+                        $price = ($specify->ADULT + $specify->CHILDREN) * $servicePrice['price'];
+                    }
+                    $det->description[] = $service['type_name'];
+                    $det->prix[] = $price;
+                }
+                foreach ($det->prix as $price) {
+                    $trip->total += $price;
+                }
+            }
+        }
+        // $this->set('trip', $trip);
+        $this->setJSONResponse([
+            'success' => true,
+            'row' => [
+                'trip' => $trip,
+                'tripDet' => $tripDetData
+            ]
+        ]);
+        // $this->raise404(sprintf("L'id %s n'existe pas", $_id));
     }
 
     public function update() {
@@ -205,7 +285,31 @@ class CircuitsController extends AppController{
             $_circuit->childrens = $this->request->getData('childrens');
             $_circuit->self_drive = $this->request->getData('self_drive');
             $_circuit->tour_operator = $this->request->getData('tour_operator');
+            $_circuit->num_vol = $this->request->getData('num_vol');
+            $_circuit->arriving_time = $this->request->getData('arriving_time');
 
+            $nb = $this->trip_det->find()->where(['id_trips' => $_id])->count();
+            $nbAll = $this->trip_det->find()->count();
+            if($nb < $_circuit->duration){
+                $last = $this->trip_det->find()->where(['id_trips' => $_id, 'day' => $nb])->first();
+                $split = explode("/", $last->date);
+                $date = $split[2].'-'.$split[1].'-'.$split[0];
+                for ($i=0; $i < $_circuit->duration - $nb; $i++) {
+                    $new = $this->trip_det->newEntity();
+                    $new->id_trips = $last->id_trips;
+                    $new->id_trip = ($nbAll+1+$i).'';
+                    $new->day = $nb+1+$i;
+                    $new->date = date('Y-m-d', strtotime($date. ' + '.($i+1).' days'));
+                    $this->trip_det->save($new);
+                }
+            }
+            else if($nb > $_circuit->duration){
+                $list = $this->trip_det->find()->where(['id_trips' => $_id])->order(['day' => 'DESC'])->toArray();
+                for ($i=0; $i < $nb - $_circuit->duration; $i++) {
+                    // $this->trip_det->query()->delete()->where(['id' => $_id, 'day' => $list[$i]->day])->execute();
+                    $this->trip_det->delete($list[$i]);
+                }
+            }
             $this->setJSONResponse([
                 'success' => $this->trip_mere->save($_circuit) !== false,
                 'row' => $_circuit
@@ -283,12 +387,10 @@ class CircuitsController extends AppController{
              ['data' => 'id_tour_operator'],
              ['data' => 'lib_tour_operator'],
              ['data' => 'ID_STATUS'],
+             ['data' => 'num_vol'],
+             ['data' => 'arriving_time'],
              ['data' => 'self_drive']
         ];
-
-        // Init table
-        // $this->circuits = TableRegistry::getTableLocator()->get('Directories');
-        // $this->contactInfos = TableRegistry::getTableLocator()->get('DirectoryContactInformations');
     }
 
     public function validate(){
@@ -306,14 +408,15 @@ class CircuitsController extends AppController{
         $this->jsonOnly();
         $_entry = $this->circuits->newEntity($this->request->getData());
         $nb = $this->circuits->find()->count();
-        $_entry->id_trips = 'TRP-'.$nb;
+        $to = $this->select2Table->find()->where(['id_tour_operator' => $_entry->tour_operator])->first();
+        $_entry->id_trips = $to->name.'-'.$nb;
         $_entry->id_status = '1';
         $valn = $this->circuits->save($_entry);
         $date = date_format($_entry->start,"Y-m-d");
         for ($i=0; $i < intval($_entry->duration); $i++) {
             $det = $this->tripDet->newEntity();
-            $nbDet = $this->tripDet->find()->count();
-            $det->id_trip = 'DET-'.$nbDet;
+            $nbDet = $this->tripDet->find()->count()+1;
+            $det->id_trip = $nbDet+1;
             $det->id_trips = $_entry->id_trips;
             $det->date = date('Y-m-d', strtotime($date. ' + '.$i.' days'));
             $det->day = $i+1;

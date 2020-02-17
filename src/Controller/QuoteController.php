@@ -8,7 +8,6 @@
 
 namespace App\Controller;
 
-use Cake\Controller\Controller;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 
@@ -17,13 +16,25 @@ use Cake\Routing\Router;
  *
  * @author RSMandimby
  */
-class QuoteController extends Controller
+class QuoteController extends AppController
 {
     public $actionsPrivileges = [
-      'index' => '12.1'
+      'index' => '12.1',
+      'quote' => '12.1'
     ];
 
     public function index(){
         $this->layout = 'fullwidth';
+        $this->set('rsto_circuit_quote_url', Router::url('/quote/quote'));
+    }
+
+    public function quote(){
+      // $this->tripMere = TableRegistry::getTableLocator()->get('TripMere');
+      // $trip = $this->tripMere->find()->where(['id_trips' => $this->request->getQuery('id')])->first();
+      // $this->set('trip', $trip);
+      // $this->setJSONResponse([
+      //   'success' => true,
+      //   'row' => $trip
+      // ]);
     }
 }

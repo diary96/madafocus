@@ -2,7 +2,11 @@
 
 /vendor/*
 /config/app.php
+<<<<<<< HEAD
+
+=======
 /tmp/*
+>>>>>>> 0d505fd05385847d552a504f3f183a1e3eca19a4
 /tmp/cache/models/*
 !/tmp/cache/models/empty
 /tmp/cache/persistent/*

@@ -12,6 +12,8 @@ var RSTOCircuits = {
         adultCount: $('#rsto-circuit-adult'),
         childCount: $('#rsto-circuit-child'),
         tour: $('#rsto-circuit-tour-operator'),
+        numVol: $('#rsto-circuit-num-vol'),
+        arrTime: $('#rsto-circuit-time'),
         drive: $('#rsto-circuit-drive')
     },
     buttons: {
@@ -105,6 +107,8 @@ var RSTOCircuits = {
             _me.fields.duration.RSTOOriginalValue(_data.DURATION);
             _me.fields.adultCount.RSTOOriginalValue(_data.ADULTS);
             _me.fields.childCount.RSTOOriginalValue(_data.childrens);
+            _me.fields.numVol.RSTOOriginalValue(_data.num_vol);
+            _me.fields.arrTime.RSTOOriginalValue(getTime(_data.arriving_time));
 
             //valeur select is_drive
             var indice;
@@ -156,8 +160,20 @@ var RSTOCircuits = {
 
         // creating Quote
         _me.buttons.quote.click(function(){
-            window.open('./quote/', '_blank', '',false);
-
+            console.log(_me.table.RSTODatatableSelectedData().id);
+            RSTOGetJSON(_me.buttons.quote.attr('data-url'), {'id': _me.table.RSTODatatableSelectedData().id}, _me.xCSRFToken, function (response) {
+                if (response) {
+                    console.log(response);
+                    var dialog = window.open('./quote/', '_blank', '',false);
+                    dialog.id = _me.table.RSTODatatableSelectedData().id;
+                    dialog.xCSRFToken = _me.xCSRFToken;
+                    dialog.trip = response.row.trip;
+                    dialog.tripDet = response.row.tripDet;
+                    dialog.opener = window;
+                } else {
+                    alert(RSTOMessages.Error);
+                }
+            });
         });
     }
 };
@@ -169,6 +185,7 @@ var RSTOTripChild = {
     datatable: null,
     datatableRoom: [],
     listModal: $('#rsto-circuit-days-modal'),
+    listModal: $('#rsto-circuit-days-modal'),
     configureModal: $('#rsto-circuit-day-modal'),
     form: $('#rsto-trip-det-form'),
     formAddRoom: $('#rsto-circuit-day-add-room-form'),
@@ -179,7 +196,7 @@ var RSTOTripChild = {
         carrier: $('#rsto-circuit-day-driver'),
         id_carrier_vehicle: $('#rsto_circuits_vehicle_select'),
         id_places : $('#rsto-circuit-place'),
-        id_meal: $('#rsto-circuit-day-meal-plan'),
+        id_meal: $('#rsto-circuit-meal-plan'),
 
         id_selected: $('#rsto-circuit-day-room-id'),
         id_room: $('#rsto-circuit-day-room-list-room-type-plan'),
@@ -194,24 +211,13 @@ var RSTOTripChild = {
         addSpecify: $('#rsto-service-form-submit-btn'),
         deleteRoon: $('#rsto-circuit-delect-room'),
         saveAddRoom: $('#rsto-circuit-day-room-form-submit-btn'),
+        always_drive: $('#rsto-circuit-always-drive-form-submit-btn'),
     },
     dataRoomTemp: null,
     init: function () {
         var circuits = RSTOCircuits;
         var _me = RSTOTripChild;
-        var initForm = function () {
-            for (variable in _me.fields) {
-                if (_me.fields.hasOwnProperty( variable )) {
 
-                   // _me.fields[variable].RSTOOriginalValue(null);
-                    if (_me.fields[variable][0].innerText) {
-                        _me.fields[variable][0].innerText = null;
-                    }
-
-                }
-                //variable.RSTOOriginalValue(undefined);
-            }
-        }
        _me.xCSRFToken = circuits.xCSRFToken;
         _me.buttons.addRoom.click( function () {
             _me.formAddRoom.RSTOReset();
@@ -229,11 +235,31 @@ var RSTOTripChild = {
             _me.fields.id_pax_room.RSTOOriginalValue(selectedData.pax)
             _me.modalAddNewRoom.modal('show');
         });
+        _me.buttons.always_drive.click( function() {
+            if(_me.fields.carrier.val()!= null && _me.fields.id_carrier_vehicle.val() != null){
+                var url = _me.buttons.always_drive.attr('data-url') + "?id=" + circuits.table.RSTODatatableSelectedData().id;
+                $.ajax({
+                    url : url,
+                    type : 'POST',
+                    data : 'carrier=' + _me.fields.carrier.val() + '&vehicle=' + _me.fields.id_carrier_vehicle.val(),
+                    headers: {
+                        'x-csrf-token': _me.xCSRFToken
+                    },
+                    dataType : 'json',
+                    success: function(outpout){
+                        _me.datatable.ajax.reload();
+                    }
+
+                });
+            }
+
+        });
 
        // On change place
         _me.fields.id_places.change(function(){
             // load hotel by id_place
             _me.fields.id_hotel.RSTODataURLQuery({place: _me.fields.id_places.val()});
+            _me.fields.id_meal.RSTODataURLQuery({hotel: _me.fields.id_places.val()});
 /*
             console.log(_me.fields.id_hotel);
             _me.fields.id_hotel[0].value = null;
@@ -247,8 +273,9 @@ var RSTOTripChild = {
         });
         // On change hotel
         _me.fields.id_hotel.change( function () {
+            console.log(_me.fields.id_hotel.val());
             // load Meal plan by hotel
-            _me.fields.id_meal.RSTODataURLQuery({hotel:_me.fields.id_hotel.val()});
+           // _me.fields.id_meal.RSTODataURLQuery({hotel: _me.fields.id_hotel.val()});
         });
         // On change carrier
         _me.fields.carrier.change( function() {
@@ -280,7 +307,6 @@ var RSTOTripChild = {
             _me.listModal.RSTOModalTitle("ITENERARY LISTE - {0}".format(_selectedTrip.id));
 
             _me.listModal.modal('show');
-
         });
         // On selecte row in the table
         _me.table.on('selectionChanged.rsto', function(e, data) {
@@ -488,16 +514,12 @@ var RSTOTripEdit = {
     }
 
 }
-function convertDate(inputFormat) {
-    function pad(s) { return (s < 10) ? '0' + s : s; }
-    const d = new Date(inputFormat);
-    return [d.getFullYear(), pad(d.getDate()),pad(d.getMonth()+1)].join('-')
-    //return [d.getFullYear(), pad(d.getMonth()+1),pad(d.getDate())].join('-')
-}
 function convertDateymd(inputFormat) {
-    var val = inputFormat.split('/');
-    var result = val[2]+"-" + val[1] +"-" + val[0];
-    return result;
+    const val = inputFormat.split('/');
+    return val[2]+"-" + val[1] +"-" + val[0];
+}
+function getTime(time) {
+    return time.split('T')[1].split('+')[0];
 }
 $(window).on('load', function(){
     RSTOCircuits.init();

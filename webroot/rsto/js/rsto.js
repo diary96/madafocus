@@ -52,7 +52,6 @@ const RSTOCRUD = function (config){
     _me.buttons.add.click(function(){
             _me.modal.modal('show');
     });
-
     // After form submission
     _me.form.on('submitted.rsto', function(e, response){
         if(response.success){
@@ -64,7 +63,6 @@ const RSTOCRUD = function (config){
             alert(RSTOMessages.Error);
         }
     });
-
     // When an item is selected on the datatable
     _me.table.on('selectionChanged.rsto', function(e, data){
         // Enable buttons
@@ -73,13 +71,11 @@ const RSTOCRUD = function (config){
                 _me.buttons[_button].RSTOEnable();
             }
         }
-
         // Update data-edit-url
         var _requestQuery = {};
         _requestQuery[config.primaryKey];
         _me.form.RSTODataURLQuery(_requestQuery, 'data-edit-url');
     });
-
     // When datatable is redrawn
     _me.table.on('draw.dt', function(){
         // Disblae buttons
@@ -89,7 +85,6 @@ const RSTOCRUD = function (config){
             }
         }
     });
-
     // Edit item
     _me.buttons.edit.click(function(){
         _me.form.attr('data-edit', 'true');
@@ -357,7 +352,6 @@ $.fn.extend({
             this._RSTOIsRequired = _this.attr('data-required') === 'true';
             this._RSTOIsValid = !this._RSTOIsRequired;
             this._RSTOStopValidation = false;
-
             _this.keyup(_validationFunction);
             _this.on('paste', _validationFunction);
         });
@@ -407,7 +401,6 @@ $.fn.extend({
                 this._RSTOOriginalValue = null;
                 this._RSTOIsRequired = _this.attr('data-required') === 'true';
                 this._RSTOIsValid = !this._RSTOIsRequired
-
                 _this.keyup(_validationFunction);
                 _this.on('paste', _validationFunction);
             }
@@ -835,7 +828,7 @@ $(window).on('load', function () {
             })
             .on('hide.bs.modal', function () {
                 $('div.modal.hidden-temporarily').not($(this)).last().each(function(){
-                    $(this).removeClass('hidden-temporarily').addClass('in').css('display', 'block');
+                    $(this).removeClass('hidden-temporarily').addClass('in').css('display', 'block').css('overflow', 'scroll');
                     $(this).data('bs.modal').$backdrop.addClass('in').css('display', 'block');
                 })
             });
