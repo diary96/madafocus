@@ -225,6 +225,7 @@ class CircuitsController extends AppController{
         $this->set('rsto_circuit_list_service_by_place', Router::url('/circuits/services_list_by_place'));
         $this->set('rsto_circuit_list_specify_by_trip', Router::url('/circuits/specify_list'));
         $this->set('rsto_circuit_currency_url', Router::url('/circuits/currencySelect2'));
+        $this->set('rsto_daily_next_place_url', Router::url('/circuitdaily/nextplace'));
     }
 
     public function quote() {
