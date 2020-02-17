@@ -12,6 +12,7 @@ var RSTOCircuits = {
         tour: $('#rsto-circuit-tour-operator'),
         numVol: $('#rsto-circuit-num-vol'),
         arrTime: $('#rsto-circuit-time'),
+        currency: $('#rsto-circuit-currency'),
         drive: $('#rsto-circuit-drive')
     },
     buttons: {
@@ -84,9 +85,9 @@ var RSTOCircuits = {
 
         _me.table.on('draw.dt', function () {
             // Disable buttons
-            //_me.buttons.edit.RSTODisable();
+            _me.buttons.edit.RSTODisable();
             _me.buttons.delete.RSTODisable();
-            //_me.buttons.validation.RSTOEnable();
+            _me.buttons.validation.RSTODisable();
             _me.buttons.infos.RSTODisable();
             _me.buttons.configure.RSTODisable();
             _me.buttons.quote.RSTODisable();
@@ -96,11 +97,7 @@ var RSTOCircuits = {
         _me.buttons.edit.click(function () {
             _me.form.attr('data-edit', 'true');
             var _data = _me.table.RSTODatatableSelectedData();
-            var d = new Date(_data.START);
-            //d = _data.START;
             // Fill the form+
-            console.log(convertDateymd(_data.START));
-            //console.log(convertDate(d));
             _me.fields.start.RSTOOriginalValue(convertDateymd(_data.START));
             _me.fields.duration.RSTOOriginalValue(_data.DURATION);
             _me.fields.adultCount.RSTOOriginalValue(_data.ADULTS);
@@ -117,7 +114,7 @@ var RSTOCircuits = {
             _me.fields.drive.RSTOOriginalValue(indice,_data.drive_lib);
             //----------------------------
             _me.fields.tour.RSTOOriginalValue(parseInt(_data.id_tour_operator),_data.lib_tour_operator);
-
+            _me.fields.currency.RSTOOriginalValue(parseInt(_data.id_currency), _data.currency_lib);
 
             // Show modal
             _me.modal.modal('show');
@@ -262,10 +259,12 @@ var RSTOTripChild = {
         _me.buttons.always_drive.click( function() {
             if(_me.fields.carrier.val()!= null && _me.fields.id_carrier_vehicle.val() != null){
                 var url = _me.buttons.always_drive.attr('data-url') + "?id=" + circuits.table.RSTODatatableSelectedData().id;
+                var _data = _me.table.RSTODatatableSelectedData();
+
                 $.ajax({
                     url : url,
                     type : 'POST',
-                    data : 'carrier=' + _me.fields.carrier.val() + '&vehicle=' + _me.fields.id_carrier_vehicle.val(),
+                    data : 'carrier=' + _me.fields.carrier.val() + '&vehicle=' + _me.fields.id_carrier_vehicle.val() + '&day=' + _data.day,
                     headers: {
                         'x-csrf-token': _me.xCSRFToken
                     },

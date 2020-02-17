@@ -69,18 +69,17 @@ class CircuitDailyController extends AppController {
     public function alwaysdrive(){
         $this->jsonOnly();
         $_id_trip = $this->request->getQuery('id', 'null');
+        $val = 2;
         $carrier = $this->request->getData('carrier');
         $vehicle = $this->request->getData('vehicle');
+        $day = $this->request->getData('day');
         if($_id_trip === 'null'){
             $this->setJSONResponse(false);
             return;
         }
         $this->trip_all->updateAll(
-            array('carrier' => $carrier),
-            array('id_trips' => $_id_trip));
-        $this->trip_all->updateAll(
-            array('id_carrier_vehicle' => $vehicle),
-            array('id_trips' => $_id_trip));
+            array('carrier' => $carrier,'id_carrier_vehicle' => $vehicle),
+            array('id_trips' => $_id_trip,'day >= '.$day));
 
         $this->setJSONResponse([
             'success' => true,

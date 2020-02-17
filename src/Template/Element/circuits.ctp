@@ -14,6 +14,10 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                         <select name="tour_operator" class="form-control" data-required="false" id="rsto-circuit-tour-operator" data-url="<?= $rsto_circuits_select2_data_url ?>" data-placeholder="<?= __("Choose a tour operator") ?>"></select>
                     </div>
                     <div class="form-group">
+                        <label for="rsto-circuit-tour-operateur"><?= __('Currency') ?></label>
+                        <select name="currency" class="form-control" data-required="false" id="rsto-circuit-currency" data-url="<?= $rsto_circuit_currency_url ?>" data-placeholder="<?= __("Choose a currency") ?>"></select>
+                    </div>
+                    <div class="form-group">
                         <label for="rsto-circuit-num-vol"><?= __('Num. vol') ?></label>
                         <input name="num_vol" type="text" class="form-control" data-required="true" id="rsto-circuit-num-vol" placeholder="<?= __("Num. vol") ?>">
                     </div>
