@@ -497,6 +497,26 @@ var RSTOTripChild = {
                     }
                 }
             });
+
+            //--------------attribution place to next day
+            if(_me.fields.id_places.val()!= null){
+                var url1 = "/circuitdaily/nextplace?id=" + circuits.table.RSTODatatableSelectedData().id;
+                var _data = _me.table.RSTODatatableSelectedData();
+
+                $.ajax({
+                    url : url1,
+                    type : 'POST',
+                    data : 'place=' + _me.fields.id_places.val() + '&day=' + _data.day,
+                    headers: {
+                        'x-csrf-token': _me.xCSRFToken
+                    },
+                    dataType : 'json',
+                    success: function(outpout){
+                        _me.datatable.ajax.reload();
+                    }
+
+                });
+            }
         });
     }
 };

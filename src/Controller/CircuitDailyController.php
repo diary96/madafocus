@@ -25,6 +25,7 @@ class CircuitDailyController extends AppController {
     public $actionsPrivileges = [
         'datatable' => '11.1',
         'alwaysdrive' => '11.1',
+        'nextplace' => '11.1',
     ];
 
     public function index() {
@@ -69,7 +70,6 @@ class CircuitDailyController extends AppController {
     public function alwaysdrive(){
         $this->jsonOnly();
         $_id_trip = $this->request->getQuery('id', 'null');
-        $val = 2;
         $carrier = $this->request->getData('carrier');
         $vehicle = $this->request->getData('vehicle');
         $day = $this->request->getData('day');
@@ -79,6 +79,24 @@ class CircuitDailyController extends AppController {
         }
         $this->trip_all->updateAll(
             array('carrier' => $carrier,'id_carrier_vehicle' => $vehicle),
+            array('id_trips' => $_id_trip,'day >= '.$day));
+
+        $this->setJSONResponse([
+            'success' => true,
+        ] );
+    }
+    public function nextplace(){
+        $this->jsonOnly();
+        $_id_trip = $this->request->getQuery('id', 'null');
+        $place = $this->request->getData('place');
+
+        $day = $this->request->getData('day');
+        if($_id_trip === 'null'){
+            $this->setJSONResponse(false);
+            return;
+        }
+        $this->trip_all->updateAll(
+            array('carrier' => $place),
             array('id_trips' => $_id_trip,'day >= '.$day));
 
         $this->setJSONResponse([
