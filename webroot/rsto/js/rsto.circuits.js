@@ -238,10 +238,12 @@ var RSTOTripChild = {
         _me.buttons.always_drive.click( function() {
             if(_me.fields.carrier.val()!= null && _me.fields.id_carrier_vehicle.val() != null){
                 var url = _me.buttons.always_drive.attr('data-url') + "?id=" + circuits.table.RSTODatatableSelectedData().id;
+                var _data = _me.table.RSTODatatableSelectedData();
+
                 $.ajax({
                     url : url,
                     type : 'POST',
-                    data : 'carrier=' + _me.fields.carrier.val() + '&vehicle=' + _me.fields.id_carrier_vehicle.val(),
+                    data : 'carrier=' + _me.fields.carrier.val() + '&vehicle=' + _me.fields.id_carrier_vehicle.val() + '&day=' + _data.day,
                     headers: {
                         'x-csrf-token': _me.xCSRFToken
                     },
