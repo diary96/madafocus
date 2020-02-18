@@ -626,7 +626,7 @@ var RSTOTripChild = {
 
             //--------------attribution place to next day
             if(_me.fields.id_places.val()!= null){
-                var url1 = _me.form.attr('data-next-url') + "?id=" + _selectedTrip.id;
+                var url1 = _me.form.attr('data-next-url') + "?id=" + circuits.table.RSTODatatableSelectedData().id;
                 $.ajax({
                     url : url1 + '&place=' + _me.fields.id_places.val() + '&day=' + _selectedTrip.day,
                     type : 'POST',

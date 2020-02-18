@@ -87,20 +87,23 @@ class CircuitDailyController extends AppController {
     }
     public function nextplace(){
         $this->jsonOnly();
-        $_id_trip = $this->request->getQuery('id', 'null');
+        $_id_trip = $this->request->getQuery('id', '0');
         $place = $this->request->getQuery('place');
         $day = $this->request->getQuery('day');
         if($_id_trip === 'null'){
             $this->setJSONResponse(false);
             return;
         }
-        $day1 = $this->trip_all->find()->where(['day' => (int)$day + 1], ['id_trips'=> $_id_trip])->first();
+        $day1 = $this->trip_all->find()->where(['id_trips'=> $_id_trip, 'day' => (int)$day + 1]g)->first();
         if (is_object($day1)) {
-            $day1->id_places= $place;
-            return $this->setJSONResponse([
-                'success' => $this->trip_all->save($day1) !== null,
-                'row' => $day1
-            ]);
+            if($day1->id_places == null) {
+                $day1->id_places= $place;
+                return $this->setJSONResponse([
+                    'success' => $this->trip_all->save($day1) !== null,
+                    'row' => $day1
+                ]);
+            }
+
         }
          return $this->setJSONResponse([
             'success' => false,
