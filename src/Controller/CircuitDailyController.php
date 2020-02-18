@@ -96,16 +96,13 @@ class CircuitDailyController extends AppController {
         }
         $day1 = $this->trip_all->find()->where(['day' => (int)$day + 1], ['id_trips'=> $_id_trip])->first();
         if (is_object($day1)) {
-            $this->trip_all->updateAll(
-            array('id_places' => $place),
-            array('id_trips' => $_id_trip ,'day' => (int)$day + 1));
-            $this->setJSONResponse([
-                'success' => true,
+            $day1->id_places= $place;
+            return $this->setJSONResponse([
+                'success' => $this->trip_all->save($day1) !== null,
                 'row' => $day1
-            ] );
-            return;
+            ]);
         }
-        $this->setJSONResponse([
+         return $this->setJSONResponse([
             'success' => false,
             'row' => $day1
         ] );
