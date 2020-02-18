@@ -103,7 +103,7 @@ modal-xl<?php $this->start('rsto_circuit_modal') ?>
                     <span aria-hidden="true">×</span></button>
                 <h4 class="modal-title"></h4>
             </div>
-            <form id="rsto-trip-det-form" name="rsto-circuit-day-form" class="rsto-form" role="form" data-x-csrf-token="<?= $x_csrf_token ?>" data-action-url="" data-edit-url="<?= $rsto_circuit_trip_det_edit_url ?>" data-specify-url="<?= $rsto_circuit_edit_specify?>" data-next-url="<?=$rsto_daily_next_place_url?>" data-room-url="<?= $rsto_circuit_edit_room_hotel?>">
+            <form id="rsto-trip-det-form" name="rsto-circuit-day-form" class="rsto-form" role="form" data-ignore-validation="true" data-x-csrf-token="<?= $x_csrf_token ?>" data-action-url="" data-edit-url="<?= $rsto_circuit_trip_det_edit_url ?>" data-specify-url="<?= $rsto_circuit_edit_specify?>" data-next-url="<?=$rsto_daily_next_place_url?>" data-room-url="<?= $rsto_circuit_edit_room_hotel?>">
                 <div class="modal-body" style="background-color: #f0f0f0">
                     <div class="box">
                         <div class="box-header with-border">
