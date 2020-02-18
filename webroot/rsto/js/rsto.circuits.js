@@ -559,7 +559,7 @@ var RSTOTripChild = {
         });
         // supprimer une ligne du datable tempo sans affecter la base de donnée
         _me.buttons.deleteRoon.click( function() {
-            _me.form.RSTOIsValid = true;
+            // _me.form.attr('data-ignore-validation', 'true');
             var selectedElement = _me.tableRoom.RSTODatatableSelectedData();
             if(_me.dataRoomTemp){
                 _me.dataRoomTemp.splice(_me.dataRoomTemp.indexOf(selectedElement),1);
