@@ -472,13 +472,145 @@ class CircuitsController extends AppController{
     }
     public function validate(){
         $this->jsonOnly();
-        $_entry = $this->trip_mere->get($this->request->getData('id'));
+        $id = $this->request->getData('id');
+        $_entry = $this->trip_mere->get($id);
         // 2: validated
         $_entry->id_status = 2;
         if (is_object($_entry)) {
             $this->setJSONResponse($this->trip_mere->save($_entry));
         } else {
             $this->raise404('Incomplete data!');
+        }
+
+        // insert into ticket table
+        $i = 1;
+        // insert ticket Services
+        $_query_services = $this->viewServices->find()->where(['trip_mere = '=>$id])->all();
+        foreach ($_query_services as $services){
+            $data = $this->servicesTable->find()->where(['trip_mere = '=>$services->trip_mere, 'id_specify = '=> $services->id_service])
+                ->order(['day'=>'asc'])->all();
+            foreach ($data as $d) {
+                $count = $this->servicesTable->find()->where(['id_specify = '=> $services->id_service
+                    ,'trip_mere =' => $services->trip_mere
+                    , 'day =' => $i + (int)$services->day])->all();
+                if (count($count) === 0) {
+                    $reservation = $this->ticket->newEntity();
+                    $reservation->id_trips = $services->trip_mere;
+                    $reservation->id_service = $services->libelle_service;
+                    $reservation->provider = $services->provider_name;
+                    $reservation->mail = $services->email;
+                    $reservation->phone = $services->phone;
+                    $reservation->date_start = $services->date_start;
+                    $reservation->duration = $i;
+                    $reservation->children = $services->children;
+                    $reservation->adult = $services->adult;
+                    $reservation->total_person = $services->total_person;
+                    $reservation->id_status = 1;
+                    $reservation->cost = $services->cost_total_jour * $i;
+                    $reservation->currency = $services->currency;
+                    if($services->email != null){
+                        $reservation->method = 'Email';
+                    }else{
+                        $reservation->method = 'Phone';
+                    }
+                    $this->ticket->save($reservation);
+                    $i = 1;
+                    break;
+                }
+                $i++;
+            }
+            $i = 1;
+        }
+
+        // insert ticket hotel
+        $view_room = $this->viewRoom->find()->where(['trip_mere = '=>$id])->all();
+        foreach ($view_room as $room){
+            $data = $this->roomTripDet->find()->where(['id_trips = '=>$room->trip_mere, 'id_room = '=> $room->id_room])
+                ->order(['day'=>'asc'])->all();
+            foreach ($data as $d) {
+                $count = $this->roomTripDet->find()->where(['id_room = '=> $room->id_room
+                    ,'id_trips =' => $room->trip_mere
+                    , 'day =' => $i + (int)$room->day])->all();
+                if (count($count) === 0) {
+                    $reservation = $this->ticket->newEntity();
+                    $reservation->id_trips = $room->trip_mere;
+                    $reservation->id_service = $room->type_room;
+                    $reservation->provider = $room->provider_name;
+                    /*$reservation->mail = $room->email;
+                    $reservation->phone = $room->phone;*/
+                    $reservation->date_start = $room->start_date;
+                    $reservation->duration = $i;
+                    $reservation->total_person = $room->total_person;
+                    $reservation->total = $room->total;
+                    $reservation->id_status = 1;
+                    if ($d->id_select_option === 'BO'){
+                        $reservation->cost = ($room->bo * $i) * $room->total;
+                    }
+                    if ($d->id_select_option === 'HB'){
+                        $reservation->cost = ($room->hb * $i) * $room->total;
+                    }
+                    if ($d->id_select_option === 'BB'){
+                        $reservation->cost = ($room->bb * $i) * $room->total;
+                    }
+                    if ($d->id_select_option === 'FB'){
+                        $reservation->cost = $room->fb * $i * $room->total;
+                    }
+                    if ($d->id_select_option === 'DU'){
+                        $reservation->cost = $room->du * $i * $room->total;
+                    }
+                    if($room->email != null){
+                        $reservation->method = 'Email';
+                    }else{
+                        $reservation->method = 'Phone';
+                    }
+                    $this->ticket->save($reservation);
+                    $i = 1;
+                    break;
+                }
+                $i++;
+            }
+            $i = 1;
+        }
+
+        // insert ticket vehicle
+        $view_vehicle = $this->viewVehicleTrip->find()->where(['trip_mere = '=>$id])->all();
+        foreach ($view_vehicle as $vehicle){
+            $data = $this->tripDet->find()->where(['id_trips = '=>$vehicle->trip_mere,
+                'type_vehicule = '=> $vehicle->type_vehicule,
+                'carrier = ' =>$vehicle->id_carrier])
+                ->order(['day'=>'asc'])->all();
+            echo json_encode($vehicle);
+            foreach ($data as $d) {
+                $count = $this->tripDet->find()->where(['id_trips = '=>$vehicle->trip_mere,
+                    'type_vehicule = '=> $vehicle->type_vehicule,
+                    'carrier = ' =>$vehicle->id_carrier
+                    , 'day =' => $i + (int)$vehicle->day])->all();
+                if (count($count) === 0) {
+                    $reservation = $this->ticket->newEntity();
+                    $reservation->id_trips = $vehicle->trip_mere;
+                    $reservation->id_service = $vehicle->service;
+                    $reservation->provider = $vehicle->carrier;
+                    $reservation->mail = $vehicle->email;
+                    $reservation->phone = $vehicle->phone;
+                    $reservation->date_start = $vehicle->date;
+                    $reservation->duration = $i;
+                    $reservation->children = 0;
+                    $reservation->adult = 0;
+                    $reservation->total_person = 0;
+                    $reservation->id_status = 1;
+                    $reservation->cost = $vehicle->cost * $i;
+                    if($vehicle->email != null){
+                        $reservation->method = 'Email';
+                    }else{
+                        $reservation->method = 'Phone';
+                    }
+                    $this->ticket->save($reservation);
+                    $i = 1;
+                    break;
+                }
+                $i++;
+            }
+            $i = 1;
         }
     }
     public function add() {

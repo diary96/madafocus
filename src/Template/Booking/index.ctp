@@ -3,9 +3,6 @@
 $this->Html->script('/datatables.net/js/jquery.dataTables.min', ['block' => true]);
 $this->Html->script('/datatables.net-bs/js/dataTables.bootstrap.min', ['block' => true]);
 $this->Html->css('/datatables.net-bs/css/dataTables.bootstrap', ['block' => true]);
-// deapicker
-$this->Html->script('/bootstrap-datepicker/js/bootstrap-datepicker.js', ['block' => true]);
-$this->Html->css('/bootstrap-datepicker/css/bootstrap-datepicker3.min', ['block' => true]);
 // select2
 $this->Html->script('/select2/js/select2.full.min', ['block' => true]);
 $this->Html->css('/select2/css/select2.min', ['block' => true]);
@@ -27,7 +24,7 @@ $this->Html->script('/rsto/js/rsto.booking', ['block' => true]);
         <button class="btn btn-app disabled" id="rsto-booking-view-btn" disabled>
             <i class="fa fa-eye"></i> <?= __('Details') ?>
         </button>
-        <button class="btn btn-app disabled" id="rsto-booking-confirm-btn" disabled>
+        <button class="btn btn-app disabled" id="rsto-booking-confirm-btn" data-url="<?= $rsto_booking_validate_url ?>"  disabled>
             <i class="fa fa-edit"></i> <?= __('Confirm') ?>
         </button>
         <button class="btn btn-app disabled" id="rsto-booking-cancel-btn" disabled>
@@ -35,31 +32,35 @@ $this->Html->script('/rsto/js/rsto.booking', ['block' => true]);
         </button>
     </div>
 </div>
+<?php if (CAN_12_1) : ?>
 <div id="rsto-booking-datatable-box" class="box">
     <div class="box-header">
         <h3 class="box-title"><?= __('Services') ?></h3>
     </div>
     <div class="box-body">
-        <table id="rsto-booking-datatable" class="table table-bordered table-hover table-responsive" width="100%" data-url="<?= $rsto_ticket_datatable_url ?>" data-x-csrf-token="<?= $x_csrf_token ?>">
+        <table id="rsto-booking-datatable" class="table table-bordered table-hover table-responsive rsto-datatable" width="100%" data-url="<?= $rsto_booking_datatable_url ?>" data-x-csrf-token="<?= $x_csrf_token ?>">
             <thead>
                 <tr>
-                    <th><?= __('ID') ?></th>
+                    <th><?= __('Numero Ticket') ?></th>
                     <th><?= __('Provider') ?></th>
                     <th><?= __('Service') ?></th>
                     <th><?= __('Total') ?></th>
                     <th><?= __('Date start') ?></th>
-                    <th><?= __('Date ending') ?></th>
                     <th><?= __('Duration / Count') ?></th>
                     <th><?= __('Total Person') ?></th>
                     <th><?= __('Adult') ?></th>
                     <th><?= __('Children') ?></th>
                     <th><?= __('Etat') ?></th>
                     <th><?= __('Cost') ?></th>
+                    <th><?= __('Email') ?></th>
+                    <th><?= __('Phone') ?></th>
+                    <th><?= __('Method') ?></th>
                 </tr>
             </thead>
         </table>
     </div>
 </div>
+<?php endif ?>
 <div class="modal fade rsto-modal" id="rsto-book-1-modal">
     <div class="modal-dialog">
         <div class="modal-content">

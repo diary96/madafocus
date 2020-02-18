@@ -13,18 +13,20 @@ const RSTObooking = {
         _me.xCSRFToken = _me.table.attr('data-x-csrf-token');
         // Init Datatable
         _me.datatable = _me.table.RSTODatatable([
-            {"data": "numero_ticket"},
-            {"data": "id_service"},
-            {"data": "id_trips"},
-            {"data": "total"},
-            {"data": "date_start"},
-            {"data": "date_ending"},
-            {"data": "duration"},
-            {"data": "total_person"},
-            {"data": "adult"},
-            {"data": "children"},
-            {"data": "id_status"},
-            {"data": "cost"}
+            {'data': 'id'},
+            {'data': 'provider'},
+            {'data': 'id_service'},
+            {'data': 'total'},
+            {'data': 'date_start'},
+            {'data': 'duration'},
+            {'data': 'total_person'},
+            {'data': 'adult'},
+            {'data': 'children'},
+            {'data': 'status'},
+            {'data': 'cost'},
+            {'data': 'mail'},
+            {'data': 'phone'},
+            {'data': 'method'}
         ]);
 
         _me.buttons.viewBtn.click(function(){
@@ -32,9 +34,20 @@ const RSTObooking = {
         });
 
         _me.buttons.confirmBtn.click(function(){
-            confirm('Do you really want to confirm ?', function(response){
-                if(response === false) return;
-                _dt.find("tr.selected").remove();
+            confirm(RSTOMessages.Validation, function(response){
+                if (response) {
+                    RSTOGetJSON(_me.buttons.confirmBtn.attr('data-url'), {'id': _me.table.RSTODatatableSelectedData().id}, _me.xCSRFToken, function (response) {
+                        console.log('miditra');
+                        if (response) {
+                            console.log('ok');
+                            // _me.datatable.ajax.reload();
+                            alert(RSTOMessages.Validated);
+                        } else {
+                            console.log('erreur');
+                            alert(RSTOMessages.Error);
+                        }
+                    });
+                }
             });
         });
 

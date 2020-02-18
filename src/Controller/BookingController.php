@@ -21,7 +21,6 @@ class BookingController extends AppController
 
     protected $booking;
 
-
     public $actionsPrivileges = [
         'add' => '12.2',
         'datatable' => '12.1',
@@ -29,20 +28,29 @@ class BookingController extends AppController
         'index' => '12.1',
         'select2' => '12.2',
         'update' => '12.2',
-        'validateName' => '12 .2'
+        'validate' => '12 .2'
     ];
 
-    public function index()
-    {
-        $this->set('rsto_ticket_datatable_url', Router::url('/booking/datatable'));
+    public function index() {
+        $this->set('rsto_booking_datatable_url', Router::url('/booking/datatable'));
+        $this->set('rsto_booking_validate_url', Router::url('/booking/validate'));
     }
 
-    public function initialize()
-    {
+    public function initialize() {
         parent::initialize();
-        $this->datatableTable = TableRegistry::getTableLocator()->get('Ticket');
-        /*$this->datatableAdditionalColumns = [
-            ['data' => 'id_ticket']
-        ];*/
+        $this->datatableTable = TableRegistry::getTableLocator()->get('ViewTicket');
+        $this->booking = TableRegistry::getTableLocator()->get('Ticket');
+    }
+
+    public function validate() {
+        $this->jsonOnly();
+        $id = $this->request->getData('id');
+        $_entry = $this->booking->get($id);
+        $_entry->id_status = 2;
+        if (is_object($_entry)) {
+            $this->setJSONResponse($this->booking->save($_entry));
+        } else {
+            $this->raise404('Incomplete data!');
+        }
     }
 }
