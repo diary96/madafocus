@@ -313,57 +313,57 @@ class CircuitsController extends AppController{
         $tourId = $this->request->getData('tour_operator');
         $tourData = $tourOperator->find()->where(['id_tour_operator' => $tourId])->first();
         // if (is_object($_circuit)) {
-            $_circuit = $this->trip_mere->newEntity();
-            $idSplit = explode("-", $_id);
-            $_circuit->id_trips = $tourData->name.'-'.$idSplit[1];
-            $_circuit->id_status = $old->id_status;
-            $_circuit->start = $this->request->getData('start');
-            $_circuit->duration = $this->request->getData('duration');
-            $_circuit->adults = $this->request->getData('adults');
-            $_circuit->childrens = $this->request->getData('childrens');
-            $_circuit->self_drive = $this->request->getData('self_drive');
-            $_circuit->tour_operator = $tourId;
-            $_circuit->num_vol = $this->request->getData('num_vol');
-            $_circuit->arriving_time = $this->request->getData('arriving_time');
-            $_circuit->currency = $this->request->getData('currency');
-            $this->trip_mere->save($_circuit);
+        $_circuit = $this->trip_mere->newEntity();
+        $idSplit = explode("-", $_id);
+        $_circuit->id_trips = $tourData->name.'-'.$idSplit[1];
+        $_circuit->id_status = $old->id_status;
+        $_circuit->start = $this->request->getData('start');
+        $_circuit->duration = $this->request->getData('duration');
+        $_circuit->adults = $this->request->getData('adults');
+        $_circuit->childrens = $this->request->getData('childrens');
+        $_circuit->self_drive = $this->request->getData('self_drive');
+        $_circuit->tour_operator = $tourId;
+        $_circuit->num_vol = $this->request->getData('num_vol');
+        $_circuit->arriving_time = $this->request->getData('arriving_time');
+        $_circuit->currency = $this->request->getData('currency');
+        $this->trip_mere->save($_circuit);
 
-            if($_id != $_circuit->id_trips){
-                $this->trip_det->query()->update()
-                    ->set(['id_trips' => $_circuit->id_trips])
-                    ->where(['id_trips' => $_id])
-                    ->execute();
-                $this->trip_mere->delete($old);
-                $_id = $_circuit->id_trips;
-            }
+        if($_id != $_circuit->id_trips){
+            $this->trip_det->query()->update()
+                ->set(['id_trips' => $_circuit->id_trips])
+                ->where(['id_trips' => $_id])
+                ->execute();
+            $this->trip_mere->delete($old);
+            $_id = $_circuit->id_trips;
+        }
 
-            $nb = $this->trip_det->find()->where(['id_trips' => $_id])->count();
-            $nbAll = $this->trip_det->find()->count();
-            if($nb < $_circuit->duration){
-                $last = $this->trip_det->find()->where(['id_trips' => $_id, 'day' => $nb])->first();
-                $split = explode("/", $last->date);
-                $date = $split[2].'-'.$split[1].'-'.$split[0];
-                for ($i=0; $i < $_circuit->duration - $nb; $i++) {
-                    $new = $this->trip_det->newEntity();
-                    $new->id_trips = $last->id_trips;
-                    $new->id_trip = ($nbAll+1+$i).'';
-                    $new->day = $nb+1+$i;
-                    $new->date = date('Y-m-d', strtotime($date. ' + '.($i+1).' days'));
-                    $this->trip_det->save($new);
-                }
+        $nb = $this->trip_det->find()->where(['id_trips' => $_id])->count();
+        $nbAll = $this->trip_det->find()->count();
+        if($nb < $_circuit->duration){
+            $last = $this->trip_det->find()->where(['id_trips' => $_id, 'day' => $nb])->first();
+            $split = explode("/", $last->date);
+            $date = $split[2].'-'.$split[1].'-'.$split[0];
+            for ($i=0; $i < $_circuit->duration - $nb; $i++) {
+                $new = $this->trip_det->newEntity();
+                $new->id_trips = $last->id_trips;
+                $new->id_trip = ($nbAll+1+$i).'';
+                $new->day = $nb+1+$i;
+                $new->date = date('Y-m-d', strtotime($date. ' + '.($i+1).' days'));
+                $this->trip_det->save($new);
             }
-            else if($nb > $_circuit->duration){
-                $list = $this->trip_det->find()->where(['id_trips' => $_id])->order(['day' => 'DESC'])->toArray();
-                for ($i=0; $i < $nb - $_circuit->duration; $i++) {
-                    // $this->trip_det->query()->delete()->where(['id' => $_id, 'day' => $list[$i]->day])->execute();
-                    $this->trip_det->delete($list[$i]);
-                }
+        }
+        else if($nb > $_circuit->duration){
+            $list = $this->trip_det->find()->where(['id_trips' => $_id])->order(['day' => 'DESC'])->toArray();
+            for ($i=0; $i < $nb - $_circuit->duration; $i++) {
+                // $this->trip_det->query()->delete()->where(['id' => $_id, 'day' => $list[$i]->day])->execute();
+                $this->trip_det->delete($list[$i]);
             }
-            $this->setJSONResponse([
-                'success' =>  true,
-                'row' => $_circuit
-            ]);
-            return;
+        }
+        $this->setJSONResponse([
+            'success' =>  true,
+            'row' => $_circuit
+        ]);
+        return;
         // }
         $this->raise404(sprintf("L'id %s n'existe pas", $_id));
     }
@@ -380,7 +380,7 @@ class CircuitsController extends AppController{
             $_trip_det->id_select_option= $this->request->getData('id_select_option');
 
             $this->setJSONResponse([
-               'success'=> $this->trip_det->save($_trip_det)  !== false,
+                'success'=> $this->trip_det->save($_trip_det)  !== false,
                 'row'=>$_trip_det
             ]);
             return;
@@ -458,16 +458,16 @@ class CircuitsController extends AppController{
         $this->view_specify_service = TableRegistry::getTableLocator()->get('ViewSpecifyService');
 
         $this->datatableAdditionalColumns = [
-             ['data' => 'ADULTS'],
-             ['data' => 'childrens'],
-             ['data' => 'id_tour_operator'],
-             ['data' => 'lib_tour_operator'],
-             ['data' => 'ID_STATUS'],
-             ['data' => 'num_vol'],
-             ['data' => 'arriving_time'],
-             ['data' => 'id_currency'],
-             ['data' => 'currency_lib'],
-             ['data' => 'self_drive']
+            ['data' => 'ADULTS'],
+            ['data' => 'childrens'],
+            ['data' => 'id_tour_operator'],
+            ['data' => 'lib_tour_operator'],
+            ['data' => 'ID_STATUS'],
+            ['data' => 'num_vol'],
+            ['data' => 'arriving_time'],
+            ['data' => 'id_currency'],
+            ['data' => 'currency_lib'],
+            ['data' => 'self_drive']
         ];
     }
     public function validate(){
